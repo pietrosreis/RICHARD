@@ -8,10 +8,16 @@ Abra `index.html` no navegador. Não há build nem dependências.
 
 ## Publicação
 
-O workflow `.github/workflows/pages.yml` liga o GitHub Pages (`configure-pages` com
-`enablement: true`) e publica a raiz do repositório a cada push na `main`. O endereço
-do site aparece em **Actions → Publicar site no GitHub Pages → deploy**, e também em
-**Settings → Pages**.
+O site está no ar em **https://kingrichard.vercel.app**.
+
+O projeto da Vercel é conectado a este repositório: **todo merge na `main` publica em
+produção automaticamente**, e cada pull request ganha uma URL de pré-visualização. Não
+há build — a Vercel serve o `index.html` direto.
+
+> O GitHub Pages foi tentado antes e não vingou: o `GITHUB_TOKEN` do Actions não
+> consegue criar o site (`Resource not accessible by integration`), só sairia ligando
+> o Pages à mão em **Settings → Pages**. Como a Vercel já cobre a publicação, o
+> workflow foi removido para não deixar falha vermelha em todo commit.
 
 ## Como funciona a confirmação de compra
 
