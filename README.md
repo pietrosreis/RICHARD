@@ -34,22 +34,26 @@ rede além do Supabase. Todo texto passa de 4.5:1 de contraste.
 
 ### Ilustração de fundo no topo
 
-Basta colocar o arquivo em `assets/` com um destes nomes — nenhuma edição de código:
+O cabeçalho usa `assets/farol.jpg` — o farol sobre o forte, com estrelinhas e mar.
 
-```
-assets/farol.jpg   ·   assets/farol.png   ·   assets/fundo.jpg   ·   assets/fundo.png
-```
+O site procura, nesta ordem, `assets/farol.jpg`, `farol.png`, `fundo.jpg` e `fundo.png`
+(`ARQUIVOS_FUNDO`, no fim do `<script>`) e usa o primeiro que **carregar de verdade**
+(`Image.onload`). Achando um, preenche `--hero-img` e liga a classe `com-imagem`;
+sem nenhum arquivo, o topo volta ao degradê e nada quebra. Para trocar a arte, basta
+substituir o arquivo — nenhuma edição de código.
 
-O site testa os quatro na ordem e usa o primeiro que carregar (`ARQUIVOS_FUNDO`, no fim
-do `<script>`). Achando um, ele preenche `--hero-img` e liga a classe `com-imagem`, que
-aplica o véu escuro sobre a ilustração; **sem nenhum arquivo, o topo fica com o degradê e
-nada quebra**.
+Com a ilustração ativa o cabeçalho fica mais alto, o medalhão da âncora sai de cena (o
+farol já é o emblema) e entra um véu em duas camadas: mais leve no centro, onde ficam o
+farol e as estrelas, e fechado embaixo, onde entra a onda. O enquadramento é
+`center 30%` com `cover` — no desktop mostra o farol atrás do título; no celular a
+ilustração cabe quase inteira.
 
-O véu é mais leve no meio e fecha embaixo, onde entra a onda. Medido no navegador com
-uma imagem clara (o pior caso para texto branco): título 5,0:1, parágrafo 6,6:1 e pílula
-de sincronização 10,3:1.
+O véu foi calibrado medindo o fundo **sem o texto na amostra** (medir com o texto
+inflava o resultado). Pior ponto sob cada elemento: título 5,4:1 (mínimo 3:1 para texto
+grande), parágrafo 5,5:1 e pílula de sincronização 8,6:1 (mínimo 4,5:1).
 
-Vale reduzir a imagem para ~1600px de largura antes de subir, para não pesar no celular.
+A imagem foi reencodada para 216 KB (de 450 KB) — JPEG progressivo, qualidade 78, sem
+EXIF, mantendo os 1051×1496 originais.
 
 ## Idiomas
 

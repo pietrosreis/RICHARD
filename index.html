@@ -108,29 +108,27 @@
     content: '';
     position: absolute; inset: 0;
     background:
-      radial-gradient(ellipse 72% 58% at 50% 44%, rgba(9, 26, 43, 0.42) 0%, rgba(9, 26, 43, 0.72) 100%),
-      linear-gradient(180deg, rgba(9, 26, 43, 0.60) 0%, rgba(9, 26, 43, 0.52) 45%, rgba(13, 39, 64, 0.90) 100%);
+      radial-gradient(ellipse 75% 60% at 50% 45%, rgba(9, 26, 43, 0.32) 0%, rgba(9, 26, 43, 0.60) 100%),
+      linear-gradient(180deg, rgba(9, 26, 43, 0.48) 0%, rgba(9, 26, 43, 0.40) 45%, rgba(13, 39, 64, 0.87) 100%);
     z-index: -1;
     opacity: 0;
     transition: opacity 0.4s ease;
   }
   .header.com-imagem {
-    padding-top: 70px;
-    padding-bottom: 104px;
+    padding-top: 120px;
+    padding-bottom: 108px;
     background-size: cover;
-    background-position: center 26%;
+    background-position: center 30%;
     background-repeat: no-repeat;
   }
   .header.com-imagem::before { opacity: 1; }
   /* Sobre a ilustração o texto ganha um pouco mais de peso */
   .header.com-imagem h1 { text-shadow: 0 2px 26px rgba(9, 26, 43, 0.75); }
   .header.com-imagem .intro { text-shadow: 0 1px 12px rgba(9, 26, 43, 0.6); }
-  .header.com-imagem .anchor {
-    background: rgba(9, 26, 43, 0.35);
-    backdrop-filter: blur(2px);
-  }
+  /* Com a ilustração no fundo, o próprio farol é o emblema: o medalhão sai */
+  .header.com-imagem .anchor { display: none; }
   @media (min-width: 900px) {
-    .header.com-imagem { padding-top: 90px; padding-bottom: 118px; }
+    .header.com-imagem { padding-top: 152px; padding-bottom: 124px; }
   }
 
   .header .anchor {
