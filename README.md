@@ -13,6 +13,23 @@ O workflow `.github/workflows/pages.yml` liga o GitHub Pages (`configure-pages` 
 do site aparece em **Actions → Publicar site no GitHub Pages → deploy**, e também em
 **Settings → Pages**.
 
+## Idiomas
+
+A página inteira funciona em **português do Brasil** e **inglês do Reino Unido** — botões
+`PT` / `EN` no canto superior direito. O idioma inicial vem do navegador (`navigator.language`),
+a escolha fica salva no `localStorage` e a troca é instantânea, sem recarregar.
+
+Os textos ficam no objeto `TEXTOS` (`pt` e `en`) no início do `<script>`; strings com
+número ou nome dentro são funções (`avisoPendente(n, quem, atraso)`). O HTML estático usa
+atributos `data-i18n` (texto), `data-i18n-html` (com marcação) e `data-i18n-attr`
+(`placeholder`, `aria-label`), preenchidos por `aplicarIdioma()`.
+
+Cada presente tem nome e descrição nos dois idiomas (`nome_pt`/`nome_en`,
+`desc_pt`/`desc_en`); o card mostra o idioma escolhido no título e o outro logo abaixo,
+já que as lojas são britânicas. A busca procura nos quatro campos, então "towel" e
+"toalha" acham o mesmo item em qualquer idioma. Horários seguem o locale
+(`pt-BR` / `en-GB`), e `<html lang>`, `<title>` e a meta description acompanham a troca.
+
 ## Como funciona a confirmação de compra
 
 O ponto central é saber **se a pessoa realmente comprou ou não**. Cada presente tem
