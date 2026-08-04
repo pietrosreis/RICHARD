@@ -19,6 +19,30 @@ há build — a Vercel serve o `index.html` direto.
 > o Pages à mão em **Settings → Pages**. Como a Vercel já cobre a publicação, o
 > workflow foi removido para não deixar falha vermelha em todo commit.
 
+## Visual
+
+Tema náutico em azul-marinho, areia e latão. O topo é um hero com medalhão da âncora,
+filete com losango e uma onda em SVG que costura o cabeçalho com o corpo da página; o
+resumo flutua sobre ela em quatro tiles com ícones e um anel de progresso. Os cards têm
+faixa superior que muda de cor conforme o estado (disponível, reservado, meta atingida),
+ícone por categoria, barra de progresso em duas camadas — verde para comprado, listrado
+para reservado — e entrada escalonada.
+
+Fontes do sistema (`Iowan Old Style`/`Palatino`/`Georgia` nos títulos), ícones em SVG
+inline, nenhum arquivo externo: a página continua sendo um HTML só, sem requisição de
+rede além do Supabase. Todo texto passa de 4.5:1 de contraste.
+
+### Imagem de fundo no topo
+
+Coloque o arquivo em `assets/` e troque uma linha no `:root`:
+
+```css
+--hero-img: url('assets/fundo.jpg');   /* no lugar de `none` */
+```
+
+O véu escuro sobre a imagem é ligado sozinho (a classe `com-imagem` entra por JS quando
+a variável deixa de ser `none`), então o título continua legível sobre qualquer foto.
+
 ## Idiomas
 
 A página inteira funciona em **português do Brasil** e **inglês do Reino Unido** — botões
