@@ -81,6 +81,34 @@
     border-radius: 999px;
   }
   .sync-status.offline { background: rgba(236, 201, 75, 0.18); color: #f6e3b0 !important; }
+
+  /* ---------- Seletor de idioma ---------- */
+  .lang-switch {
+    position: absolute;
+    top: 14px;
+    right: 16px;
+    display: flex;
+    gap: 4px;
+    background: rgba(255,255,255,0.12);
+    padding: 4px;
+    border-radius: 999px;
+  }
+  .lang-switch button {
+    background: none;
+    border: none;
+    color: #dce9f5;
+    font-family: inherit;
+    font-size: 0.8em;
+    font-weight: bold;
+    letter-spacing: 0.5px;
+    padding: 5px 11px;
+    border-radius: 999px;
+    cursor: pointer;
+  }
+  .lang-switch button:hover { background: rgba(255,255,255,0.15); }
+  .lang-switch button[aria-pressed="true"] { background: #ffffff; color: var(--navy); }
+  .lang-switch button:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+  .header { position: relative; }
   .sync-status button {
     background: none;
     border: 1px solid rgba(255,255,255,0.4);
@@ -374,33 +402,37 @@
 </head>
 <body>
 
-<a class="skip-link" href="#app">Ir para a lista de presentes</a>
+<a class="skip-link" href="#app" data-i18n="skip">Ir para a lista de presentes</a>
 
 <header class="header">
+  <div class="lang-switch" id="lang-switch" role="group" data-i18n-attr="aria-label:langAria">
+    <button type="button" data-idioma="pt" aria-pressed="true">PT</button>
+    <button type="button" data-idioma="en" aria-pressed="false">EN</button>
+  </div>
   <span class="anchor" aria-hidden="true">⚓</span>
-  <h1>Lista de Presentes do Richard</h1>
-  <p>Escolha um item, informe a quantidade e ajude a montar o enxoval completo. Depois de comprar, <strong>volte aqui e confirme a compra</strong> — assim ninguém compra o mesmo presente duas vezes.</p>
+  <h1 data-i18n="titulo">Lista de Presentes do Richard</h1>
+  <p data-i18n-html="intro">Escolha um item, informe a quantidade e ajude a montar o enxoval completo. Depois de comprar, <strong>volte aqui e confirme a compra</strong> — assim ninguém compra o mesmo presente duas vezes.</p>
   <p class="sync-status" id="sync-status" aria-live="polite">
     <span id="sync-texto">Conectando à lista…</span>
-    <button type="button" id="sync-btn" onclick="sincronizar(true)">Atualizar</button>
+    <button type="button" id="sync-btn" data-i18n="atualizar" onclick="sincronizar(true)">Atualizar</button>
   </p>
 </header>
 
-<section class="summary" aria-label="Resumo da lista">
-  <div class="summary-card is-done"><strong id="sum-confirmados">0</strong><span>Compras confirmadas</span></div>
-  <div class="summary-card is-pending"><strong id="sum-pendentes">0</strong><span>Aguardando confirmação</span></div>
-  <div class="summary-card"><strong id="sum-faltam">0</strong><span>Ainda faltam</span></div>
-  <div class="summary-card"><strong id="sum-pct">0%</strong><span>Enxoval completo</span></div>
+<section class="summary" data-i18n-attr="aria-label:resumoAria">
+  <div class="summary-card is-done"><strong id="sum-confirmados">0</strong><span data-i18n="resConfirmadas">Compras confirmadas</span></div>
+  <div class="summary-card is-pending"><strong id="sum-pendentes">0</strong><span data-i18n="resPendentes">Aguardando confirmação</span></div>
+  <div class="summary-card"><strong id="sum-faltam">0</strong><span data-i18n="resFaltam">Ainda faltam</span></div>
+  <div class="summary-card"><strong id="sum-pct">0%</strong><span data-i18n="resCompleto">Enxoval completo</span></div>
 </section>
 
 <main class="container">
 
   <div class="toolbar">
     <div class="search-wrap">
-      <label class="sr-only" for="busca">Buscar presente</label>
-      <input type="search" id="busca" placeholder="Buscar presente… / Search gift…" autocomplete="off">
+      <label class="sr-only" for="busca" data-i18n="buscaLabel">Buscar presente</label>
+      <input type="search" id="busca" data-i18n-attr="placeholder:buscaPlaceholder" placeholder="Buscar presente…" autocomplete="off">
     </div>
-    <div class="filters" id="filtros" role="group" aria-label="Filtrar por categoria"></div>
+    <div class="filters" id="filtros" role="group" data-i18n-attr="aria-label:filtrosAria"></div>
   </div>
 
   <div class="card-grid" id="app">
@@ -408,16 +440,16 @@
   </div>
 
   <section class="my-gifts" id="minhas-reservas" hidden>
-    <h2>Meus presentes 🎁</h2>
-    <p class="hint">Estas são as reservas feitas neste dispositivo. Confirme quando a compra estiver feita — ou libere o item se mudar de ideia.</p>
+    <h2 data-i18n="meusPresentes">Meus presentes 🎁</h2>
+    <p class="hint" data-i18n="meusPresentesDica">Estas são as reservas feitas neste dispositivo. Confirme quando a compra estiver feita — ou libere o item se mudar de ideia.</p>
     <div id="lista-reservas"></div>
   </section>
 
 </main>
 
 <footer>
-  <p>Feito com carinho para o Richard ⚓ · Os dados ficam salvos neste navegador.</p>
-  <p><button type="button" onclick="exportarDados()">Exportar reservas (JSON)</button> · <button type="button" onclick="limparMeusDados()">Apagar minhas reservas</button></p>
+  <p data-i18n="rodape">Feito com carinho para o Richard ⚓ · Os dados ficam salvos neste navegador.</p>
+  <p><button type="button" data-i18n="exportar" onclick="exportarDados()">Exportar reservas (JSON)</button> · <button type="button" data-i18n="apagar" onclick="limparMeusDados()">Apagar minhas reservas</button></p>
 </footer>
 
 <!-- Modal 1: reserva -->
@@ -427,18 +459,18 @@
     <p id="modal-subtitle" class="subtitle-pt"></p>
     <p id="modal-desc"></p>
 
-    <label for="modal-nome">Seu nome / Your name</label>
-    <input type="text" id="modal-nome" placeholder="Ex.: Ana e João" autocomplete="name">
+    <label for="modal-nome" data-i18n="campoNome">Seu nome</label>
+    <input type="text" id="modal-nome" data-i18n-attr="placeholder:campoNomeEx" placeholder="Ex.: Ana e João" autocomplete="name">
 
-    <label for="modal-input">Quantidade / Quantity</label>
+    <label for="modal-input" data-i18n="campoQtd">Quantidade</label>
     <input type="number" id="modal-input" min="1" value="1">
 
     <p class="error-msg" id="modal-erro" role="alert"></p>
-    <p class="hint">Ao confirmar, o item fica <strong>reservado</strong> para você e a loja abre em uma nova aba. A reserva só vira compra confirmada quando você avisar aqui.</p>
+    <p class="hint" data-i18n-html="reservaDica">Ao confirmar, o item fica <strong>reservado</strong> para você e a loja abre em uma nova aba. A reserva só vira compra confirmada quando você avisar aqui.</p>
 
     <div class="modal-btns">
-      <button type="button" class="btn btn-cancel" onclick="fecharModal()">Cancelar</button>
-      <button type="button" class="btn" onclick="confirmarPresente()">Reservar e ir à loja</button>
+      <button type="button" class="btn btn-cancel" data-i18n="cancelar" onclick="fecharModal()">Cancelar</button>
+      <button type="button" class="btn" data-i18n="reservarIr" onclick="confirmarPresente()">Reservar e ir à loja</button>
     </div>
   </div>
 </div>
@@ -446,14 +478,14 @@
 <!-- Modal 2: aviso / confirmação de compra -->
 <div class="modal-overlay" id="modal-check" role="dialog" aria-modal="true" aria-labelledby="check-title">
   <div class="modal">
-    <h3 id="check-title">Você conseguiu comprar? 🛒</h3>
+    <h3 id="check-title" data-i18n="checkTitulo">Você conseguiu comprar? 🛒</h3>
     <p id="check-desc" class="hint" style="margin-bottom:16px;"></p>
     <div class="modal-stack">
-      <button type="button" class="btn btn-green" onclick="responderCompra('confirmado')">✅ Sim, já comprei</button>
-      <button type="button" class="btn btn-ghost" onclick="responderCompra('pendente')">⏳ Ainda não — vou comprar depois</button>
-      <button type="button" class="btn btn-danger" onclick="responderCompra('cancelado')">❌ Não vou comprar (liberar item)</button>
+      <button type="button" class="btn btn-green" data-i18n="checkSim" onclick="responderCompra('confirmado')">✅ Sim, já comprei</button>
+      <button type="button" class="btn btn-ghost" data-i18n="checkDepois" onclick="responderCompra('pendente')">⏳ Ainda não — vou comprar depois</button>
+      <button type="button" class="btn btn-danger" data-i18n="checkNao" onclick="responderCompra('cancelado')">❌ Não vou comprar (liberar item)</button>
     </div>
-    <p class="hint">Reservas sem confirmação são liberadas automaticamente depois de <strong id="check-ttl">3 dias</strong>, para o item não ficar preso na lista.</p>
+    <p class="hint" id="check-rodape"></p>
   </div>
 </div>
 
@@ -465,29 +497,285 @@
      ========================================================= */
   const produtos = [
     // BANHO E HIGIENE
-    { id: 9,  categoria: "Bath & Hygiene", nome_en: "Baby Bath Tub with Stand", nome_pt: "Banheira com Suporte", desc: "Com termômetro embutido.", meta: 1, link: "https://www.amazon.co.uk/s?k=baby+bath+tub+with+stand" },
-    { id: 10, categoria: "Bath & Hygiene", nome_en: "Hooded Baby Towels", nome_pt: "Toalhas de Banho com Capuz", desc: "Algodão super macio.", meta: 4, link: "https://www.shein.co.uk/pdsearch/baby%20towel/" },
-    { id: 11, categoria: "Bath & Hygiene", nome_en: "Baby Grooming Kit", nome_pt: "Kit Higiene para o Quarto", desc: "Escova de cabelo, tesourinha, etc.", meta: 1, link: "https://www.amazon.co.uk/s?k=baby+grooming+kit" },
-    { id: 12, categoria: "Bath & Hygiene", nome_en: "Healthcare Kit", nome_pt: "Kit Farmácia Básica", desc: "Termômetro, Aspirador Nasal, Vick Baby.", meta: 1, link: "https://www.boots.com/search/baby+thermometer" },
-    { id: 13, categoria: "Bath & Hygiene", nome_en: "Dummy Clips", nome_pt: "Prendedores de Chupeta", desc: "Modelos em madeira/silicone.", meta: 3, link: "https://www.temu.com/uk/search_result.html?search_key=dummy+clip" },
-    { id: 14, categoria: "Bath & Hygiene", nome_en: "Baby Toiletries Set", nome_pt: "Kit Cosméticos para Bebê", desc: "Shampoo, Creme, Óleo, Pomadas.", meta: 2, link: "https://www.boots.com/search/sudocrem" },
+    { id: 9,  categoria: "Bath & Hygiene", nome_en: "Baby Bath Tub with Stand", nome_pt: "Banheira com Suporte", desc_pt: "Com termômetro embutido.", desc_en: "With a built-in thermometer.", meta: 1, link: "https://www.amazon.co.uk/s?k=baby+bath+tub+with+stand" },
+    { id: 10, categoria: "Bath & Hygiene", nome_en: "Hooded Baby Towels", nome_pt: "Toalhas de Banho com Capuz", desc_pt: "Algodão super macio.", desc_en: "Super soft cotton.", meta: 4, link: "https://www.shein.co.uk/pdsearch/baby%20towel/" },
+    { id: 11, categoria: "Bath & Hygiene", nome_en: "Baby Grooming Kit", nome_pt: "Kit Higiene para o Quarto", desc_pt: "Escova de cabelo, tesourinha, etc.", desc_en: "Hairbrush, baby scissors and more.", meta: 1, link: "https://www.amazon.co.uk/s?k=baby+grooming+kit" },
+    { id: 12, categoria: "Bath & Hygiene", nome_en: "Healthcare Kit", nome_pt: "Kit Farmácia Básica", desc_pt: "Termômetro, Aspirador Nasal, Vick Baby.", desc_en: "Thermometer, nasal aspirator, vapour rub.", meta: 1, link: "https://www.boots.com/search/baby+thermometer" },
+    { id: 13, categoria: "Bath & Hygiene", nome_en: "Dummy Clips", nome_pt: "Prendedores de Chupeta", desc_pt: "Modelos em madeira/silicone.", desc_en: "Wooden and silicone styles.", meta: 3, link: "https://www.temu.com/uk/search_result.html?search_key=dummy+clip" },
+    { id: 14, categoria: "Bath & Hygiene", nome_en: "Baby Toiletries Set", nome_pt: "Kit Cosméticos para Bebê", desc_pt: "Shampoo, Creme, Óleo, Pomadas.", desc_en: "Shampoo, cream, oil and nappy balm.", meta: 2, link: "https://www.boots.com/search/sudocrem" },
 
     // QUARTO E PASSEIO
-    { id: 15, categoria: "Nursery & Outing", nome_en: "Bedding Set & Blankets", nome_pt: "Protetor, Lençóis e Mantas", desc: "Para montar o bercinho aconchegante.", meta: 4, link: "https://www.ikea.com/gb/en/search/?q=baby%20bedding" },
-    { id: 16, categoria: "Nursery & Outing", nome_en: "Muslin Squares", nome_pt: "Fraldas de Boca (Muselinas)", desc: "O item mais usado nos primeiros meses.", meta: 10, link: "https://www.amazon.co.uk/s?k=muslin+squares" },
-    { id: 17, categoria: "Nursery & Outing", nome_en: "Baby Sleeping Bags", nome_pt: "Sacos de Dormir (Swaddle)", desc: "Para noites seguras e quentinhas.", meta: 2, link: "https://www.amazon.co.uk/s?k=baby+sleeping+bag" },
-    { id: 19, categoria: "Nursery & Outing", nome_en: "Baby Video Monitor", nome_pt: "Babá Eletrônica", desc: "Monitor com vídeo para segurança.", meta: 1, link: "https://www.amazon.co.uk/s?k=baby+monitor" },
-    { id: 20, categoria: "Nursery & Outing", nome_en: "Nappy Changing Bag", nome_pt: "Bolsa Maternidade", desc: "Mochila espaçosa com divisórias.", meta: 1, link: "https://www.shein.co.uk/pdsearch/nappy%20bag/" },
-    { id: 21, categoria: "Nursery & Outing", nome_en: "Baby Play Mat", nome_pt: "Tapete de Atividades", desc: "Para o Tummy Time e estímulos.", meta: 1, link: "https://www.amazon.co.uk/s?k=baby+play+mat" },
+    { id: 15, categoria: "Nursery & Outing", nome_en: "Bedding Set & Blankets", nome_pt: "Protetor, Lençóis e Mantas", desc_pt: "Para montar o bercinho aconchegante.", desc_en: "To make the cot cosy.", meta: 4, link: "https://www.ikea.com/gb/en/search/?q=baby%20bedding" },
+    { id: 16, categoria: "Nursery & Outing", nome_en: "Muslin Squares", nome_pt: "Fraldas de Boca (Muselinas)", desc_pt: "O item mais usado nos primeiros meses.", desc_en: "The most used item in the first months.", meta: 10, link: "https://www.amazon.co.uk/s?k=muslin+squares" },
+    { id: 17, categoria: "Nursery & Outing", nome_en: "Baby Sleeping Bags", nome_pt: "Sacos de Dormir (Swaddle)", desc_pt: "Para noites seguras e quentinhas.", desc_en: "For safe, warm nights.", meta: 2, link: "https://www.amazon.co.uk/s?k=baby+sleeping+bag" },
+    { id: 19, categoria: "Nursery & Outing", nome_en: "Baby Video Monitor", nome_pt: "Babá Eletrônica", desc_pt: "Monitor com vídeo para segurança.", desc_en: "Video monitor for peace of mind.", meta: 1, link: "https://www.amazon.co.uk/s?k=baby+monitor" },
+    { id: 20, categoria: "Nursery & Outing", nome_en: "Nappy Changing Bag", nome_pt: "Bolsa Maternidade", desc_pt: "Mochila espaçosa com divisórias.", desc_en: "Roomy backpack with compartments.", meta: 1, link: "https://www.shein.co.uk/pdsearch/nappy%20bag/" },
+    { id: 21, categoria: "Nursery & Outing", nome_en: "Baby Play Mat", nome_pt: "Tapete de Atividades", desc_pt: "Para o Tummy Time e estímulos.", desc_en: "For tummy time and playtime.", meta: 1, link: "https://www.amazon.co.uk/s?k=baby+play+mat" },
 
     // ROUPAS
-    { id: 22, categoria: "Clothing", nome_en: "Long Sleeve Bodysuits", nome_pt: "Bodys de Manga Longa", desc: "Base de roupas (Tamanho 0-3M e 3-6M).", meta: 10, link: "https://www.shein.co.uk/pdsearch/baby%20boy%20long%20sleeve%20bodysuit/" },
-    { id: 23, categoria: "Clothing", nome_en: "Winter Sleepsuits", nome_pt: "Macacões de Inverno com Pé", desc: "Macacão quentinho para dormir.", meta: 8, link: "https://www.shein.co.uk/pdsearch/baby%20boy%20winter%20sleepsuit/" },
-    { id: 24, categoria: "Clothing", nome_en: "Knitted Cardigans", nome_pt: "Casacos de Tricô", desc: "Casacos fáceis de vestir.", meta: 3, link: "https://www.shein.co.uk/pdsearch/baby%20boy%20knit%20cardigan/" },
-    { id: 25, categoria: "Clothing", nome_en: "Winter Pramsuit", nome_pt: "Macacão de Neve", desc: "Garante o passeio no inverno de Londres.", meta: 1, link: "https://www.temu.com/uk/search_result.html?search_key=baby+boy+pramsuit" },
-    { id: 26, categoria: "Clothing", nome_en: "Hats, Mittens & Socks", nome_pt: "Kit de Toucas, Luvinhas e Meias", desc: "Acessórios de inverno.", meta: 3, link: "https://www.temu.com/uk/search_result.html?search_key=baby+winter+hat+set" },
-    { id: 27, categoria: "Clothing", nome_en: "Cotton Joggers", nome_pt: "Calças de Moletom (Joggers)", desc: "Perfeitas para a fase de engatinhar.", meta: 7, link: "https://www.temu.com/uk/search_result.html?search_key=baby+boy+cotton+trousers" }
+    { id: 22, categoria: "Clothing", nome_en: "Long Sleeve Bodysuits", nome_pt: "Bodys de Manga Longa", desc_pt: "Base de roupas (Tamanho 0-3M e 3-6M).", desc_en: "Wardrobe basics (sizes 0-3m and 3-6m).", meta: 10, link: "https://www.shein.co.uk/pdsearch/baby%20boy%20long%20sleeve%20bodysuit/" },
+    { id: 23, categoria: "Clothing", nome_en: "Winter Sleepsuits", nome_pt: "Macacões de Inverno com Pé", desc_pt: "Macacão quentinho para dormir.", desc_en: "Warm all-in-ones for sleeping.", meta: 8, link: "https://www.shein.co.uk/pdsearch/baby%20boy%20winter%20sleepsuit/" },
+    { id: 24, categoria: "Clothing", nome_en: "Knitted Cardigans", nome_pt: "Casacos de Tricô", desc_pt: "Casacos fáceis de vestir.", desc_en: "Knits that are easy to put on.", meta: 3, link: "https://www.shein.co.uk/pdsearch/baby%20boy%20knit%20cardigan/" },
+    { id: 25, categoria: "Clothing", nome_en: "Winter Pramsuit", nome_pt: "Macacão de Neve", desc_pt: "Garante o passeio no inverno de Londres.", desc_en: "Essential for walks in the London winter.", meta: 1, link: "https://www.temu.com/uk/search_result.html?search_key=baby+boy+pramsuit" },
+    { id: 26, categoria: "Clothing", nome_en: "Hats, Mittens & Socks", nome_pt: "Kit de Toucas, Luvinhas e Meias", desc_pt: "Acessórios de inverno.", desc_en: "Winter accessories.", meta: 3, link: "https://www.temu.com/uk/search_result.html?search_key=baby+winter+hat+set" },
+    { id: 27, categoria: "Clothing", nome_en: "Cotton Joggers", nome_pt: "Calças de Moletom (Joggers)", desc_pt: "Perfeitas para a fase de engatinhar.", desc_en: "Perfect for the crawling stage.", meta: 7, link: "https://www.temu.com/uk/search_result.html?search_key=baby+boy+cotton+trousers" }
   ];
+
+  /* =========================================================
+     Idiomas — português do Brasil e inglês do Reino Unido
+     ========================================================= */
+  const CATEGORIAS = {
+    'Bath & Hygiene':   { pt: 'Banho e Higiene',  en: 'Bath & Hygiene' },
+    'Nursery & Outing': { pt: 'Quarto e Passeio', en: 'Nursery & Outing' },
+    'Clothing':         { pt: 'Roupas',           en: 'Clothing' }
+  };
+
+  const TEXTOS = {
+    pt: {
+      locale: 'pt-BR',
+      htmlLang: 'pt-BR',
+      docTitulo: 'Chá de Bebê - Richard ⚓',
+      metaDesc: 'Lista de presentes do chá de bebê do Richard — escolha um item, reserve e confirme a compra.',
+      skip: 'Ir para a lista de presentes',
+      langAria: 'Escolher idioma',
+      titulo: 'Lista de Presentes do Richard',
+      intro: 'Escolha um item, informe a quantidade e ajude a montar o enxoval completo. Depois de comprar, <strong>volte aqui e confirme a compra</strong> — assim ninguém compra o mesmo presente duas vezes.',
+      atualizar: 'Atualizar',
+      resumoAria: 'Resumo da lista',
+      resConfirmadas: 'Compras confirmadas',
+      resPendentes: 'Aguardando confirmação',
+      resFaltam: 'Ainda faltam',
+      resCompleto: 'Enxoval completo',
+      buscaLabel: 'Buscar presente',
+      buscaPlaceholder: 'Buscar presente…',
+      filtrosAria: 'Filtrar por categoria',
+      todos: 'Todos',
+      meusPresentes: 'Meus presentes 🎁',
+      meusPresentesDica: 'Estas são as reservas feitas neste dispositivo. Confirme quando a compra estiver feita — ou libere o item se mudar de ideia.',
+      rodape: 'Feito com carinho para o Richard ⚓ · Os dados ficam salvos neste navegador.',
+      exportar: 'Exportar reservas (JSON)',
+      apagar: 'Apagar minhas reservas',
+
+      campoNome: 'Seu nome',
+      campoNomeEx: 'Ex.: Ana e João',
+      campoQtd: 'Quantidade',
+      reservaDica: 'Ao confirmar, o item fica <strong>reservado</strong> para você e a loja abre em uma nova aba. A reserva só vira compra confirmada quando você avisar aqui.',
+      cancelar: 'Cancelar',
+      reservarIr: 'Reservar e ir à loja',
+      checkTitulo: 'Você conseguiu comprar? 🛒',
+      checkSim: '✅ Sim, já comprei',
+      checkDepois: '⏳ Ainda não — vou comprar depois',
+      checkNao: '❌ Não vou comprar (liberar item)',
+
+      // ---- estado da sincronização ----
+      syncConectando: 'Conectando à lista…',
+      syncLocal: 'Lista local — as reservas ficam só neste aparelho.',
+      syncAndamento: 'Sincronizando…',
+      syncOk: hora => `🟢 Lista compartilhada com todos os convidados${hora ? ' · atualizada às ' + hora : ''}`,
+      syncFila: (n, desde) => `🟠 Sem conexão — ${n} reserva(s) ainda não enviada(s) aos outros convidados${desde}`,
+      syncOffline: desde => `🟠 Sem conexão com o servidor${desde || ' — mostrando apenas as suas reservas'}`,
+      syncDesde: hora => ` · última atualização às ${hora}`,
+
+      // ---- cards ----
+      vazio: 'Nenhum presente encontrado com esse filtro. 🔍',
+      selDisponivel: 'Disponível',
+      selReservado: 'Reservado',
+      selParcial: 'Parcialmente reservado',
+      selCompleto: 'Meta atingida',
+      meta: 'Meta',
+      faltam: 'Faltam',
+      comprado: 'Comprado',
+      reservado: 'Reservado',
+      barraAria: (c, m, p) => `${c} de ${m} confirmados, ${p} reservados`,
+      avisoConfirmado: (n, quem) => `<strong>${n} unidade(s) com compra confirmada.</strong>${quem ? ' Comprado por ' + quem + '.' : ''} Obrigado!`,
+      avisoPendente: (n, quem, atraso) =>
+        `<strong>${n} unidade(s) reservada(s), mas ainda sem confirmação de compra.</strong>${quem ? ' Reservado por ' + quem + '.' : ''}${atraso ? ` ${atraso} reserva(s) já passou de ${AVISO_HORAS}h sem confirmação — se foi você, confirme em “Meus presentes”.` : ''}`,
+      avisoExpirado: n => `${n} reserva(s) expirou sem confirmação e o item voltou a ficar disponível.`,
+      btnPresentear: 'Quero presentear',
+      btnTudoReservado: 'Tudo reservado — aguardando confirmação',
+      btnMetaAtingida: 'Meta atingida! ⚓',
+
+      // ---- meus presentes ----
+      agoraHaPouco: 'agora há pouco',
+      hHoras: h => `há ${h}h`,
+      hDias: d => `há ${d} dia(s)`,
+      linhaConfirmada: quando => `✅ Compra confirmada ${quando}`,
+      linhaExpirada: quando => `⚠️ Reserva expirada (${quando}) — o item voltou para a lista`,
+      linhaPendente: quando => `⏳ Reservado ${quando} — <strong>compra ainda não confirmada</strong>`,
+      acaoDesfazer: 'Desfazer confirmação',
+      acaoCompreiAssim: 'Comprei mesmo assim',
+      acaoRemover: 'Remover',
+      acaoJaComprei: '✅ Já comprei',
+      acaoLoja: 'Abrir loja',
+      acaoLiberar: 'Liberar',
+
+      // ---- diálogos e avisos ----
+      modalDesc: n => `Ainda faltam ${n} unidade(s) disponível(is). Quantas você quer presentear?`,
+      erroNome: 'Por favor, escreva seu nome — assim os pais sabem quem presenteou.',
+      erroQtd: 'Informe uma quantidade válida.',
+      erroSobram: n => `Só restam ${n} unidade(s) disponível(is).`,
+      checkDesc: (qtd, a, b) => `Você reservou ${qtd}× ${a} (${b}). A loja abriu em outra aba — quando terminar, responda aqui.`,
+      checkRodape: dias => `Reservas sem confirmação são liberadas automaticamente depois de <strong>${dias} dias</strong>, para o item não ficar preso na lista.`,
+      okConfirmado: 'Compra confirmada! Muito obrigado ⚓',
+      okLiberado: 'Sem problemas — o item voltou para a lista.',
+      okGuardado: dias => `Reserva guardada. Volte aqui para confirmar em até ${dias} dias, senão o item é liberado.`,
+      okDesfeito: 'Confirmação desfeita — a reserva voltou a ficar pendente.',
+      okLiberadoOutros: 'Item liberado para outros convidados.',
+      confirmLiberar: 'Tem certeza que quer liberar este item para outra pessoa?',
+      confirmApagarServidor: 'Isto esquece as suas reservas neste navegador. As que já foram enviadas continuam valendo para os outros convidados — para liberar um item, use o botão “Liberar”. Continuar?',
+      confirmApagarLocal: 'Isto apaga todas as reservas salvas neste navegador. Continuar?',
+      okApagado: 'Reservas apagadas deste dispositivo.',
+      okAtualizado: 'Lista atualizada.',
+      erroServidor: 'Não consegui falar com o servidor. Mostrando só as suas reservas.',
+      erroSalvar: 'Não consegui salvar no navegador — anote seu presente para não esquecer.',
+      lembrete: n => `Você tem ${n} presente(s) reservado(s) sem confirmação de compra. Confirme em “Meus presentes”.`
+    },
+
+    en: {
+      locale: 'en-GB',
+      htmlLang: 'en-GB',
+      docTitulo: "Richard's Baby Shower ⚓",
+      metaDesc: "Richard's baby shower gift list — pick an item, reserve it and confirm your purchase.",
+      skip: 'Skip to the gift list',
+      langAria: 'Choose language',
+      titulo: "Richard's Gift List",
+      intro: 'Pick an item, tell us how many, and help us get everything ready. After buying, <strong>come back and confirm your purchase</strong> — that way nobody buys the same gift twice.',
+      atualizar: 'Refresh',
+      resumoAria: 'List summary',
+      resConfirmadas: 'Purchases confirmed',
+      resPendentes: 'Awaiting confirmation',
+      resFaltam: 'Still needed',
+      resCompleto: 'List complete',
+      buscaLabel: 'Search gift',
+      buscaPlaceholder: 'Search gift…',
+      filtrosAria: 'Filter by category',
+      todos: 'All',
+      meusPresentes: 'My gifts 🎁',
+      meusPresentesDica: 'These are the reservations made on this device. Confirm once you have bought the gift — or release it if you change your mind.',
+      rodape: 'Made with love for Richard ⚓ · Your choices are saved in this browser.',
+      exportar: 'Export reservations (JSON)',
+      apagar: 'Delete my reservations',
+
+      campoNome: 'Your name',
+      campoNomeEx: 'e.g. Ana and João',
+      campoQtd: 'Quantity',
+      reservaDica: 'Once you confirm, the item is <strong>reserved</strong> for you and the shop opens in a new tab. It only counts as bought when you tell us here.',
+      cancelar: 'Cancel',
+      reservarIr: 'Reserve and go to the shop',
+      checkTitulo: 'Did you manage to buy it? 🛒',
+      checkSim: "✅ Yes, I've bought it",
+      checkDepois: '⏳ Not yet — I will buy it later',
+      checkNao: '❌ I am not buying it (release the item)',
+
+      syncConectando: 'Connecting to the list…',
+      syncLocal: 'Local list — reservations stay on this device only.',
+      syncAndamento: 'Syncing…',
+      syncOk: hora => `🟢 List shared with all guests${hora ? ' · updated at ' + hora : ''}`,
+      syncFila: (n, desde) => `🟠 Offline — ${n} reservation(s) not sent to the other guests yet${desde}`,
+      syncOffline: desde => `🟠 No connection to the server${desde || ' — showing your reservations only'}`,
+      syncDesde: hora => ` · last updated at ${hora}`,
+
+      vazio: 'No gift matches this filter. 🔍',
+      selDisponivel: 'Available',
+      selReservado: 'Reserved',
+      selParcial: 'Partly reserved',
+      selCompleto: 'Goal reached',
+      meta: 'Goal',
+      faltam: 'Missing',
+      comprado: 'Bought',
+      reservado: 'Reserved',
+      barraAria: (c, m, p) => `${c} of ${m} confirmed, ${p} reserved`,
+      avisoConfirmado: (n, quem) => `<strong>${n} item(s) with the purchase confirmed.</strong>${quem ? ' Bought by ' + quem + '.' : ''} Thank you!`,
+      avisoPendente: (n, quem, atraso) =>
+        `<strong>${n} item(s) reserved, but the purchase is not confirmed yet.</strong>${quem ? ' Reserved by ' + quem + '.' : ''}${atraso ? ` ${atraso} reservation(s) passed ${AVISO_HORAS}h without confirmation — if that was you, confirm under “My gifts”.` : ''}`,
+      avisoExpirado: n => `${n} reservation(s) expired without confirmation and the item is available again.`,
+      btnPresentear: 'I want to gift this',
+      btnTudoReservado: 'All reserved — awaiting confirmation',
+      btnMetaAtingida: 'Goal reached! ⚓',
+
+      agoraHaPouco: 'just now',
+      hHoras: h => `${h}h ago`,
+      hDias: d => `${d} day(s) ago`,
+      linhaConfirmada: quando => `✅ Purchase confirmed ${quando}`,
+      linhaExpirada: quando => `⚠️ Reservation expired (${quando}) — the item went back to the list`,
+      linhaPendente: quando => `⏳ Reserved ${quando} — <strong>purchase not confirmed yet</strong>`,
+      acaoDesfazer: 'Undo confirmation',
+      acaoCompreiAssim: 'I bought it anyway',
+      acaoRemover: 'Remove',
+      acaoJaComprei: "✅ I've bought it",
+      acaoLoja: 'Open shop',
+      acaoLiberar: 'Release',
+
+      modalDesc: n => `${n} item(s) still available. How many would you like to gift?`,
+      erroNome: 'Please write your name — so the parents know who gave the gift.',
+      erroQtd: 'Please enter a valid quantity.',
+      erroSobram: n => `Only ${n} item(s) still available.`,
+      checkDesc: (qtd, a, b) => `You reserved ${qtd}× ${a} (${b}). The shop opened in another tab — tell us here when you are done.`,
+      checkRodape: dias => `Reservations without confirmation are released automatically after <strong>${dias} days</strong>, so the item does not stay stuck on the list.`,
+      okConfirmado: 'Purchase confirmed! Thank you so much ⚓',
+      okLiberado: 'No problem — the item is back on the list.',
+      okGuardado: dias => `Reservation saved. Come back to confirm within ${dias} days, otherwise the item is released.`,
+      okDesfeito: 'Confirmation undone — the reservation is pending again.',
+      okLiberadoOutros: 'Item released for the other guests.',
+      confirmLiberar: 'Are you sure you want to release this item for someone else?',
+      confirmApagarServidor: 'This forgets your reservations in this browser. The ones already sent still count for the other guests — to release an item, use the “Release” button. Continue?',
+      confirmApagarLocal: 'This deletes every reservation saved in this browser. Continue?',
+      okApagado: 'Reservations deleted from this device.',
+      okAtualizado: 'List updated.',
+      erroServidor: 'Could not reach the server. Showing your reservations only.',
+      erroSalvar: 'Could not save in this browser — write your gift down so you do not forget.',
+      lembrete: n => `You have ${n} gift(s) reserved without a confirmed purchase. Confirm under “My gifts”.`
+    }
+  };
+
+  function idiomaPadrao() {
+    const nav = (navigator.language || 'pt').toLowerCase();
+    return nav.startsWith('pt') ? 'pt' : 'en';
+  }
+
+  // Atalho usado em toda a renderização.
+  const t = chave => TEXTOS[estado.idioma][chave];
+  const nomePrincipal = p => estado.idioma === 'pt' ? p.nome_pt : p.nome_en;
+  const nomeSecundario = p => estado.idioma === 'pt' ? p.nome_en : p.nome_pt;
+  const descricao = p => estado.idioma === 'pt' ? p.desc_pt : p.desc_en;
+  const categoria = c => (CATEGORIAS[c] || {})[estado.idioma] || c;
+  const hora = d => d.toLocaleTimeString(TEXTOS[estado.idioma].locale, { hour: '2-digit', minute: '2-digit' });
+
+  function trocarIdioma(novo) {
+    if (!TEXTOS[novo] || novo === estado.idioma) return;
+    estado.idioma = novo;
+    salvarEstado();
+    aplicarIdioma();
+    renderizarFiltros();
+    renderTudo();
+    mostrarSync(online ? 'ok' : 'offline');
+  }
+
+  // Preenche tudo que é estático na página a partir do dicionário.
+  function aplicarIdioma() {
+    const d = TEXTOS[estado.idioma];
+    document.documentElement.lang = d.htmlLang;
+    document.title = d.docTitulo;
+    document.querySelector('meta[name="description"]').setAttribute('content', d.metaDesc);
+
+    document.querySelectorAll('[data-i18n]').forEach(el => {
+      el.textContent = d[el.dataset.i18n];
+    });
+    document.querySelectorAll('[data-i18n-html]').forEach(el => {
+      el.innerHTML = d[el.dataset.i18nHtml];
+    });
+    document.querySelectorAll('[data-i18n-attr]').forEach(el => {
+      el.dataset.i18nAttr.split(';').forEach(par => {
+        const [attr, chave] = par.split(':');
+        el.setAttribute(attr.trim(), d[chave.trim()]);
+      });
+    });
+
+    document.getElementById('check-rodape').innerHTML = d.checkRodape(Math.round(TTL_HORAS / 24));
+    document.querySelectorAll('#lang-switch button').forEach(b => {
+      b.setAttribute('aria-pressed', String(b.dataset.idioma === estado.idioma));
+    });
+  }
 
   /* =========================================================
      Servidor compartilhado (Supabase)
@@ -519,7 +807,7 @@
   let ultimoFoco = null;
 
   function carregarEstado() {
-    const vazio = { dispositivoId: novoId(), nome: '', reservas: [], cacheRemoto: [] };
+    const vazio = { dispositivoId: novoId(), nome: '', reservas: [], cacheRemoto: [], idioma: idiomaPadrao() };
     try {
       const bruto = localStorage.getItem(STORAGE_KEY);
       if (!bruto) return vazio;
@@ -535,7 +823,8 @@
           pendenteSync: r.pendenteSync !== undefined ? r.pendenteSync : !r.servidorId
         })),
         cacheRemoto: Array.isArray(dados.cacheRemoto) ? dados.cacheRemoto : [],
-        ultimaSync: dados.ultimaSync || null
+        ultimaSync: dados.ultimaSync || null,
+        idioma: TEXTOS[dados.idioma] ? dados.idioma : idiomaPadrao()
       };
     } catch (e) {
       console.warn('Não foi possível ler os dados salvos:', e);
@@ -547,7 +836,7 @@
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
     } catch (e) {
-      toast('Não consegui salvar no navegador — anote seu presente para não esquecer.', 'warn');
+      toast(t('erroSalvar'), 'warn');
     }
   }
 
@@ -662,10 +951,10 @@
       estado.ultimaSync = ultimaSync.toISOString();
       definirOnline(true);
       salvarEstado();
-      if (manual) toast('Lista atualizada.', 'ok');
+      if (manual) toast(t('okAtualizado'), 'ok');
     } catch (e) {
       definirOnline(false);
-      if (manual) toast('Não consegui falar com o servidor. Mostrando só as suas reservas.', 'warn');
+      if (manual) toast(t('erroServidor'), 'warn');
     } finally {
       sincronizando = false;
       renderTudo();
@@ -683,25 +972,22 @@
     const botao = document.getElementById('sync-btn');
     if (!servidorAtivo()) {
       caixa.classList.add('offline');
-      texto.textContent = 'Lista local — as reservas ficam só neste aparelho.';
+      texto.textContent = t('syncLocal');
       botao.hidden = true;
       return;
     }
     botao.hidden = false;
     botao.disabled = situacao === 'sincronizando';
     if (situacao === 'sincronizando') {
-      texto.textContent = 'Sincronizando…';
+      texto.textContent = t('syncAndamento');
     } else if (situacao === 'ok') {
-      const hora = ultimaSync ? ultimaSync.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
       caixa.classList.remove('offline');
-      texto.textContent = `🟢 Lista compartilhada com todos os convidados${hora ? ' · atualizada às ' + hora : ''}`;
+      texto.textContent = t('syncOk')(ultimaSync ? hora(ultimaSync) : '');
     } else {
       caixa.classList.add('offline');
       const naFila = estado.reservas.filter(r => r.pendenteSync).length;
-      const desde = ultimaSync ? ` · última atualização às ${ultimaSync.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : '';
-      texto.textContent = naFila
-        ? `🟠 Sem conexão — ${naFila} reserva(s) ainda não enviada(s) aos outros convidados${desde}`
-        : `🟠 Sem conexão com o servidor${desde || ' — mostrando apenas as suas reservas'}`;
+      const desde = ultimaSync ? t('syncDesde')(hora(ultimaSync)) : '';
+      texto.textContent = naFila ? t('syncFila')(naFila, desde) : t('syncOffline')(desde);
     }
   }
 
@@ -751,14 +1037,13 @@
 
   function renderizarFiltros() {
     const categorias = ['Todos', ...new Set(produtos.map(p => p.categoria))];
-    const rotulos = { 'Todos': 'All / Todos' };
     const box = document.getElementById('filtros');
     box.innerHTML = '';
     categorias.forEach(cat => {
       const b = document.createElement('button');
       b.type = 'button';
       b.className = 'filter-btn' + (cat === filtroAtual ? ' active' : '');
-      b.textContent = rotulos[cat] || cat;
+      b.textContent = cat === 'Todos' ? t('todos') : categoria(cat);
       b.setAttribute('aria-pressed', String(cat === filtroAtual));
       b.addEventListener('click', () => filtrar(cat));
       box.appendChild(b);
@@ -788,16 +1073,14 @@
     const lista = produtos.filter(p => {
       const okCategoria = filtroAtual === 'Todos' || p.categoria === filtroAtual;
       const okBusca = !busca ||
-        p.nome_en.toLowerCase().includes(busca) ||
-        p.nome_pt.toLowerCase().includes(busca) ||
-        p.desc.toLowerCase().includes(busca);
+        [p.nome_en, p.nome_pt, p.desc_pt, p.desc_en].some(txt => txt.toLowerCase().includes(busca));
       return okCategoria && okBusca;
     });
 
     app.innerHTML = '';
 
     if (!lista.length) {
-      app.innerHTML = '<p class="empty">Nenhum presente encontrado com esse filtro. 🔍</p>';
+      app.innerHTML = `<p class="empty">${esc(t('vazio'))}</p>`;
       return;
     }
 
@@ -806,55 +1089,50 @@
       const pctConfirmado = Math.min(100, (s.confirmados / p.meta) * 100);
       const pctReservado = Math.min(100 - pctConfirmado, (s.pendentes / p.meta) * 100);
 
-      let badge = '<span class="badge badge-open">Disponível</span>';
+      let badge = `<span class="badge badge-open">${esc(t('selDisponivel'))}</span>`;
       let classe = '';
-      if (s.completo) { badge = '<span class="badge badge-done">Meta atingida</span>'; classe = ' completo'; }
-      else if (s.disponivel === 0) { badge = '<span class="badge badge-pending">Reservado</span>'; classe = ' pendente'; }
-      else if (s.pendentes > 0) { badge = '<span class="badge badge-pending">Parcialmente reservado</span>'; classe = ' pendente'; }
+      if (s.completo) { badge = `<span class="badge badge-done">${esc(t('selCompleto'))}</span>`; classe = ' completo'; }
+      else if (s.disponivel === 0) { badge = `<span class="badge badge-pending">${esc(t('selReservado'))}</span>`; classe = ' pendente'; }
+      else if (s.pendentes > 0) { badge = `<span class="badge badge-pending">${esc(t('selParcial'))}</span>`; classe = ' pendente'; }
 
       // ---- Avisos de compra confirmada / não confirmada ----
       let avisos = '';
       if (s.confirmados > 0) {
-        const quem = s.quemConfirmou ? ` Comprado por ${s.quemConfirmou}.` : '';
-        avisos += `<div class="alert alert-done"><span aria-hidden="true">✅</span><span><strong>${s.confirmados} unidade(s) com compra confirmada.</strong>${esc(quem)} Obrigado!</span></div>`;
+        avisos += `<div class="alert alert-done"><span aria-hidden="true">✅</span><span>${t('avisoConfirmado')(s.confirmados, esc(s.quemConfirmou))}</span></div>`;
       }
       if (s.pendentes > 0) {
-        const quem = s.quemReservou ? ` Reservado por ${s.quemReservou}.` : '';
-        const extra = s.aguardando > 0
-          ? ` ${s.aguardando} reserva(s) já passou de ${AVISO_HORAS}h sem confirmação — se foi você, confirme em “Meus presentes”.`
-          : '';
-        avisos += `<div class="alert alert-pending"><span aria-hidden="true">⏳</span><span><strong>${s.pendentes} unidade(s) reservada(s), mas ainda sem confirmação de compra.</strong>${esc(quem)}${esc(extra)}</span></div>`;
+        avisos += `<div class="alert alert-pending"><span aria-hidden="true">⏳</span><span>${t('avisoPendente')(s.pendentes, esc(s.quemReservou), s.aguardando)}</span></div>`;
       }
       if (s.expirados > 0) {
-        avisos += `<div class="alert alert-expired"><span aria-hidden="true">⚠️</span><span>${s.expirados} reserva(s) expirou sem confirmação e o item voltou a ficar disponível.</span></div>`;
+        avisos += `<div class="alert alert-expired"><span aria-hidden="true">⚠️</span><span>${esc(t('avisoExpirado')(s.expirados))}</span></div>`;
       }
 
       const podeReservar = !s.completo && s.disponivel > 0;
-      const textoBotao = s.completo ? 'Meta atingida! ⚓' : (s.disponivel === 0 ? 'Tudo reservado — aguardando confirmação' : 'Quero presentear');
+      const textoBotao = s.completo ? t('btnMetaAtingida') : (s.disponivel === 0 ? t('btnTudoReservado') : t('btnPresentear'));
 
       const card = document.createElement('div');
       card.className = 'card' + classe;
       card.innerHTML = `
         <div>
           <div class="card-top">
-            <div class="card-category">${esc(p.categoria)}</div>
+            <div class="card-category">${esc(categoria(p.categoria))}</div>
             ${badge}
           </div>
-          <h3>${esc(p.nome_en)}</h3>
-          <p class="subtitle-pt">${esc(p.nome_pt)}</p>
-          <p class="desc">${esc(p.desc)}</p>
+          <h3>${esc(nomePrincipal(p))}</h3>
+          <p class="subtitle-pt">${esc(nomeSecundario(p))}</p>
+          <p class="desc">${esc(descricao(p))}</p>
 
           <div class="status-row">
-            <span>Meta: ${p.meta}</span>
-            <span style="color:${s.completo ? 'var(--green)' : 'var(--red)'}">Faltam: ${Math.max(0, p.meta - s.confirmados)}</span>
+            <span>${esc(t('meta'))}: ${p.meta}</span>
+            <span style="color:${s.completo ? 'var(--green)' : 'var(--red)'}">${esc(t('faltam'))}: ${Math.max(0, p.meta - s.confirmados)}</span>
           </div>
-          <div class="progress-bg" role="img" aria-label="${s.confirmados} de ${p.meta} confirmados, ${s.pendentes} reservados">
+          <div class="progress-bg" role="img" aria-label="${esc(t('barraAria')(s.confirmados, p.meta, s.pendentes))}">
             <div class="progress-fill" style="width:${pctConfirmado}%"></div>
             <div class="progress-reserved" style="width:${pctReservado}%"></div>
           </div>
           <div class="legend">
-            <span><i style="background:var(--green)"></i>Comprado: ${s.confirmados}</span>
-            <span><i style="background:#ecc94b"></i>Reservado: ${s.pendentes}</span>
+            <span><i style="background:var(--green)"></i>${esc(t('comprado'))}: ${s.confirmados}</span>
+            <span><i style="background:#ecc94b"></i>${esc(t('reservado'))}: ${s.pendentes}</span>
           </div>
           ${avisos}
         </div>
@@ -883,29 +1161,30 @@
       if (!p) return;
       const st = statusEfetivo(r);
       const horas = Math.floor(horasDesde(r.criadoEm));
-      const quando = horas < 1 ? 'agora há pouco' : (horas < 24 ? `há ${horas}h` : `há ${Math.floor(horas / 24)} dia(s)`);
+      const quando = horas < 1 ? t('agoraHaPouco')
+                   : (horas < 24 ? t('hHoras')(horas) : t('hDias')(Math.floor(horas / 24)));
 
       let situacao, acoes;
       if (st === 'confirmado') {
-        situacao = `<small style="color:var(--green)">✅ Compra confirmada ${quando}</small>`;
-        acoes = `<button type="button" class="btn btn-sm btn-cancel" data-acao="desfazer" data-id="${r.id}">Desfazer confirmação</button>`;
+        situacao = `<small style="color:var(--green)">${t('linhaConfirmada')(esc(quando))}</small>`;
+        acoes = `<button type="button" class="btn btn-sm btn-cancel" data-acao="desfazer" data-id="${r.id}">${esc(t('acaoDesfazer'))}</button>`;
       } else if (st === 'expirado') {
-        situacao = `<small style="color:var(--red)">⚠️ Reserva expirada (${quando}) — o item voltou para a lista</small>`;
-        acoes = `<button type="button" class="btn btn-sm btn-green" data-acao="confirmar" data-id="${r.id}">Comprei mesmo assim</button>
-                 <button type="button" class="btn btn-sm btn-danger" data-acao="cancelar" data-id="${r.id}">Remover</button>`;
+        situacao = `<small style="color:var(--red)">${t('linhaExpirada')(esc(quando))}</small>`;
+        acoes = `<button type="button" class="btn btn-sm btn-green" data-acao="confirmar" data-id="${r.id}">${esc(t('acaoCompreiAssim'))}</button>
+                 <button type="button" class="btn btn-sm btn-danger" data-acao="cancelar" data-id="${r.id}">${esc(t('acaoRemover'))}</button>`;
       } else {
-        situacao = `<small style="color:var(--amber)">⏳ Reservado ${quando} — <strong>compra ainda não confirmada</strong></small>`;
-        acoes = `<button type="button" class="btn btn-sm btn-green" data-acao="confirmar" data-id="${r.id}">✅ Já comprei</button>
-                 <button type="button" class="btn btn-sm btn-ghost" data-acao="loja" data-id="${r.id}">Abrir loja</button>
-                 <button type="button" class="btn btn-sm btn-danger" data-acao="cancelar" data-id="${r.id}">Liberar</button>`;
+        situacao = `<small style="color:var(--amber)">${t('linhaPendente')(esc(quando))}</small>`;
+        acoes = `<button type="button" class="btn btn-sm btn-green" data-acao="confirmar" data-id="${r.id}">${esc(t('acaoJaComprei'))}</button>
+                 <button type="button" class="btn btn-sm btn-ghost" data-acao="loja" data-id="${r.id}">${esc(t('acaoLoja'))}</button>
+                 <button type="button" class="btn btn-sm btn-danger" data-acao="cancelar" data-id="${r.id}">${esc(t('acaoLiberar'))}</button>`;
       }
 
       const div = document.createElement('div');
       div.className = 'reserva';
       div.innerHTML = `
         <div class="reserva-info">
-          <strong>${r.qtd}× ${esc(p.nome_en)}</strong>
-          <small>${esc(p.nome_pt)}</small><br>
+          <strong>${r.qtd}× ${esc(nomePrincipal(p))}</strong>
+          <small>${esc(nomeSecundario(p))}</small><br>
           ${situacao}
         </div>
         <div class="reserva-acoes">${acoes}</div>
@@ -938,10 +1217,9 @@
     if (!itemAtual) return;
     const s = resumoProduto(itemAtual);
 
-    document.getElementById('modal-title').textContent = itemAtual.nome_en;
-    document.getElementById('modal-subtitle').textContent = itemAtual.nome_pt;
-    document.getElementById('modal-desc').textContent =
-      `Ainda faltam ${s.disponivel} unidade(s) disponível(is). Quantas você quer presentear?`;
+    document.getElementById('modal-title').textContent = nomePrincipal(itemAtual);
+    document.getElementById('modal-subtitle').textContent = nomeSecundario(itemAtual);
+    document.getElementById('modal-desc').textContent = t('modalDesc')(s.disponivel);
 
     const input = document.getElementById('modal-input');
     input.max = s.disponivel;
@@ -962,9 +1240,9 @@
     const qtd = parseInt(document.getElementById('modal-input').value, 10);
     const s = resumoProduto(itemAtual);
 
-    if (nome.length < 2) { erro.textContent = 'Por favor, escreva seu nome — assim os pais sabem quem presenteou.'; return; }
-    if (isNaN(qtd) || qtd <= 0) { erro.textContent = 'Informe uma quantidade válida.'; return; }
-    if (qtd > s.disponivel) { erro.textContent = `Só restam ${s.disponivel} unidade(s) disponível(is).`; return; }
+    if (nome.length < 2) { erro.textContent = t('erroNome'); return; }
+    if (isNaN(qtd) || qtd <= 0) { erro.textContent = t('erroQtd'); return; }
+    if (qtd > s.disponivel) { erro.textContent = t('erroSobram')(s.disponivel); return; }
 
     const reserva = {
       id: novoId(),
@@ -995,8 +1273,7 @@
     // O aviso: perguntamos explicitamente se a compra aconteceu.
     reservaPendenteDeResposta = reserva.id;
     document.getElementById('check-desc').textContent =
-      `Você reservou ${qtd}× ${produto.nome_en} (${produto.nome_pt}). A loja abriu em outra aba — quando terminar, responda aqui.`;
-    document.getElementById('check-ttl').textContent = `${Math.round(TTL_HORAS / 24)} dias`;
+      t('checkDesc')(qtd, nomePrincipal(produto), nomeSecundario(produto));
     abrir('modal-check');
   }
 
@@ -1009,12 +1286,12 @@
     if (resposta === 'confirmado') {
       r.status = 'confirmado';
       r.confirmadoEm = new Date().toISOString();
-      toast('Compra confirmada! Muito obrigado ⚓', 'ok');
+      toast(t('okConfirmado'), 'ok');
     } else if (resposta === 'cancelado') {
       r.status = 'cancelado';
-      toast('Sem problemas — o item voltou para a lista.', 'warn');
+      toast(t('okLiberado'), 'warn');
     } else {
-      toast(`Reserva guardada. Volte aqui para confirmar em até ${Math.round(TTL_HORAS / 24)} dias, senão o item é liberado.`, 'warn');
+      toast(t('okGuardado')(Math.round(TTL_HORAS / 24)), 'warn');
     }
 
     r.pendenteSync = servidorAtivo();
@@ -1032,16 +1309,16 @@
       r.status = 'confirmado';
       r.criadoEm = r.criadoEm || new Date().toISOString();
       r.confirmadoEm = new Date().toISOString();
-      toast('Compra confirmada! Obrigado ⚓', 'ok');
+      toast(t('okConfirmado'), 'ok');
     } else if (acao === 'desfazer') {
       r.status = 'pendente';
       r.criadoEm = new Date().toISOString();
       r.confirmadoEm = null;
-      toast('Confirmação desfeita — a reserva voltou a ficar pendente.', 'warn');
+      toast(t('okDesfeito'), 'warn');
     } else if (acao === 'cancelar') {
-      if (!confirm('Tem certeza que quer liberar este item para outra pessoa?')) return;
+      if (!confirm(t('confirmLiberar'))) return;
       r.status = 'cancelado';
-      toast('Item liberado para outros convidados.', 'warn');
+      toast(t('okLiberadoOutros'), 'warn');
     } else if (acao === 'loja') {
       if (p) window.open(p.link, '_blank', 'noopener');
       return;
@@ -1081,7 +1358,7 @@
     const dados = todasReservas().map(r => {
       const p = produtos.find(x => x.id === r.produtoId);
       return {
-        presente: p ? p.nome_en : r.produtoId,
+        gift_en: p ? p.nome_en : r.produtoId,
         presente_pt: p ? p.nome_pt : '',
         convidado: r.nome,
         quantidade: r.qtd,
@@ -1100,14 +1377,12 @@
   }
 
   function limparMeusDados() {
-    const aviso = servidorAtivo()
-      ? 'Isto esquece as suas reservas neste navegador. As que já foram enviadas continuam valendo para os outros convidados — para liberar um item, use o botão “Liberar”. Continuar?'
-      : 'Isto apaga todas as reservas salvas neste navegador. Continuar?';
-    if (!confirm(aviso)) return;
-    estado = { dispositivoId: novoId(), nome: '', reservas: [] };
+    if (!confirm(t(servidorAtivo() ? 'confirmApagarServidor' : 'confirmApagarLocal'))) return;
+    const idioma = estado.idioma;
+    estado = { dispositivoId: novoId(), nome: '', reservas: [], cacheRemoto: [], idioma };
     salvarEstado();
     renderTudo();
-    toast('Reservas apagadas deste dispositivo.', 'warn');
+    toast(t('okApagado'), 'warn');
   }
 
   /* =========================================================
@@ -1144,14 +1419,19 @@
     if (!pendentesMinhas.length) return;
     ultimoLembrete = Date.now();
     renderTudo();
-    toast(`Você tem ${pendentesMinhas.length} presente(s) reservado(s) sem confirmação de compra. Confirme em “Meus presentes”.`, 'warn');
+    toast(t('lembrete')(pendentesMinhas.length), 'warn');
   }
   window.addEventListener('focus', () => { sincronizar(); lembrarPendentes(); });
   window.addEventListener('online', () => sincronizar());
 
+  document.querySelectorAll('#lang-switch button').forEach(b => {
+    b.addEventListener('click', () => trocarIdioma(b.dataset.idioma));
+  });
+
   /* =========================================================
      Inicialização
      ========================================================= */
+  aplicarIdioma();
   renderizarFiltros();
   renderTudo();
   mostrarSync(servidorAtivo() ? 'sincronizando' : 'offline');
