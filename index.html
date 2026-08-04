@@ -49,7 +49,8 @@
     --fonte-titulo: 'Iowan Old Style', 'Palatino Linotype', Palatino, 'Book Antiqua', Georgia, serif;
     --fonte-texto: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
 
-    /* Imagem de fundo do topo — troque `none` por url('assets/fundo.jpg') */
+    /* Imagem de fundo do topo. O JS procura os arquivos em ARQUIVOS_FUNDO e,
+       achando um, liga a classe .com-imagem e preenche esta variável. */
     --hero-img: none;
   }
 
@@ -101,16 +102,36 @@
     overflow: hidden;
     isolation: isolate;
   }
-  /* Véu que mantém o texto legível sobre qualquer imagem de fundo */
+  /* Véu que mantém o texto legível sobre a ilustração.
+     Mais leve no topo (onde fica o céu) e fechado embaixo, onde entra a onda. */
   .header::before {
     content: '';
     position: absolute; inset: 0;
-    background: linear-gradient(180deg, rgba(13, 39, 64, 0.62) 0%, rgba(13, 39, 64, 0.82) 100%);
+    background:
+      radial-gradient(ellipse 72% 58% at 50% 44%, rgba(9, 26, 43, 0.42) 0%, rgba(9, 26, 43, 0.72) 100%),
+      linear-gradient(180deg, rgba(9, 26, 43, 0.60) 0%, rgba(9, 26, 43, 0.52) 45%, rgba(13, 39, 64, 0.90) 100%);
     z-index: -1;
     opacity: 0;
-    transition: opacity 0.3s;
+    transition: opacity 0.4s ease;
+  }
+  .header.com-imagem {
+    padding-top: 70px;
+    padding-bottom: 104px;
+    background-size: cover;
+    background-position: center 26%;
+    background-repeat: no-repeat;
   }
   .header.com-imagem::before { opacity: 1; }
+  /* Sobre a ilustração o texto ganha um pouco mais de peso */
+  .header.com-imagem h1 { text-shadow: 0 2px 26px rgba(9, 26, 43, 0.75); }
+  .header.com-imagem .intro { text-shadow: 0 1px 12px rgba(9, 26, 43, 0.6); }
+  .header.com-imagem .anchor {
+    background: rgba(9, 26, 43, 0.35);
+    backdrop-filter: blur(2px);
+  }
+  @media (min-width: 900px) {
+    .header.com-imagem { padding-top: 90px; padding-bottom: 118px; }
+  }
 
   .header .anchor {
     display: inline-flex;
@@ -1805,10 +1826,20 @@
   /* =========================================================
      Inicialização
      ========================================================= */
-  // Havendo imagem de fundo no topo (--hero-img), liga o véu que mantém o texto legível.
-  if (getComputedStyle(document.documentElement).getPropertyValue('--hero-img').trim() !== 'none') {
-    document.querySelector('.header').classList.add('com-imagem');
-  }
+  /* Ilustração de fundo do topo: usa o primeiro arquivo que existir.
+     Enquanto nenhum existir, o topo fica com o degradê — nada quebra. */
+  const ARQUIVOS_FUNDO = ['assets/farol.jpg', 'assets/farol.png', 'assets/fundo.jpg', 'assets/fundo.png'];
+
+  (function carregarFundo(i = 0) {
+    if (i >= ARQUIVOS_FUNDO.length) return;
+    const teste = new Image();
+    teste.onload = () => {
+      document.documentElement.style.setProperty('--hero-img', `url('${ARQUIVOS_FUNDO[i]}')`);
+      document.querySelector('.header').classList.add('com-imagem');
+    };
+    teste.onerror = () => carregarFundo(i + 1);
+    teste.src = ARQUIVOS_FUNDO[i];
+  })();
 
   aplicarIdioma();
   renderizarFiltros();
