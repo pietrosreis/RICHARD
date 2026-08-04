@@ -1,0 +1,937 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Lista de presentes do chá de bebê do Richard — escolha um item, reserve e confirme a compra.">
+<meta name="theme-color" content="#1a365d">
+<title>Chá de Bebê - Richard ⚓</title>
+<style>
+  :root {
+    --navy: #1a365d;
+    --navy-soft: #3a5a78;
+    --navy-dark: #223547;
+    --sand: #f4ece0;
+    --sand-deep: #e7dcc9;
+    --paper: #ffffff;
+    --ink: #223547;
+    --ink-soft: #5b6b7c;
+    --line: #e2e8f0;
+    --green: #2f855a;
+    --green-soft: #e7f6ed;
+    --amber: #b7791f;
+    --amber-soft: #fdf3dd;
+    --red: #c53030;
+    --red-soft: #fdecec;
+    --radius: 14px;
+    --shadow: 0 6px 18px rgba(26, 54, 93, 0.08);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    background-color: var(--sand);
+    background-image: radial-gradient(circle at 1px 1px, rgba(58, 90, 120, 0.10) 1px, transparent 0);
+    background-size: 22px 22px;
+    font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+    color: var(--ink);
+    margin: 0;
+    padding: 0;
+    line-height: 1.5;
+  }
+
+  .skip-link {
+    position: absolute; left: -9999px; top: 0;
+    background: #fff; color: var(--navy); padding: 10px 16px; z-index: 2000; border-radius: 0 0 8px 0;
+  }
+  .skip-link:focus { left: 0; }
+
+  /* ---------- Cabeçalho ---------- */
+  .header {
+    background: linear-gradient(160deg, #1a365d 0%, #274a72 100%);
+    color: #ffffff;
+    text-align: center;
+    padding: 46px 20px 38px;
+    border-bottom: 5px solid var(--navy-soft);
+  }
+  .header .anchor { font-size: 2.2em; line-height: 1; display: block; margin-bottom: 6px; }
+  .header h1 {
+    margin: 0;
+    font-size: clamp(1.7em, 5vw, 2.6em);
+    letter-spacing: 2px;
+    font-family: 'Georgia', serif;
+  }
+  .header p {
+    font-size: 1.02em;
+    color: #dce9f5;
+    max-width: 640px;
+    margin: 12px auto 0;
+  }
+
+  /* ---------- Resumo geral ---------- */
+  .summary {
+    max-width: 1200px;
+    margin: -26px auto 0;
+    padding: 0 20px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 14px;
+  }
+  .summary-card {
+    background: var(--paper);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 16px;
+    text-align: center;
+    border-top: 4px solid var(--navy-soft);
+  }
+  .summary-card strong { display: block; font-size: 1.7em; font-family: 'Georgia', serif; color: var(--navy); }
+  .summary-card span { font-size: 0.8em; text-transform: uppercase; letter-spacing: 0.6px; color: var(--ink-soft); }
+  .summary-card.is-pending { border-top-color: var(--amber); }
+  .summary-card.is-pending strong { color: var(--amber); }
+  .summary-card.is-done { border-top-color: var(--green); }
+  .summary-card.is-done strong { color: var(--green); }
+
+  .container { max-width: 1200px; margin: 0 auto; padding: 26px 20px 60px; }
+
+  /* ---------- Barra de ferramentas ---------- */
+  .toolbar {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    margin: 26px 0 18px;
+  }
+  .search-wrap { position: relative; flex: 1 1 260px; }
+  .search-wrap input {
+    width: 100%;
+    padding: 11px 14px 11px 38px;
+    border: 1px solid var(--line);
+    border-radius: 999px;
+    font-size: 0.95em;
+    background: var(--paper) url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='%235b6b7c' stroke-width='2'><circle cx='11' cy='11' r='7'/><path d='M20 20l-3.5-3.5'/></svg>") no-repeat 12px center;
+    background-size: 16px;
+    color: var(--ink);
+  }
+  .search-wrap input:focus { outline: 3px solid rgba(58, 90, 120, 0.35); outline-offset: 1px; }
+
+  .filters { display: flex; flex-wrap: wrap; gap: 8px; justify-content: center; }
+  .filter-btn {
+    background-color: var(--sand-deep);
+    border: 1px solid transparent;
+    padding: 9px 16px;
+    border-radius: 999px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 0.86em;
+    color: #4a5568;
+    transition: background 0.2s, color 0.2s;
+  }
+  .filter-btn:hover { background-color: #d9cdb7; }
+  .filter-btn.active { background-color: var(--navy-soft); color: #fff; }
+  .filter-btn:focus-visible { outline: 3px solid rgba(58, 90, 120, 0.5); outline-offset: 2px; }
+
+  /* ---------- Cards ---------- */
+  .card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(270px, 1fr));
+    gap: 20px;
+  }
+  .card {
+    background: var(--paper);
+    border-radius: var(--radius);
+    padding: 20px;
+    box-shadow: var(--shadow);
+    border-top: 5px solid var(--navy-soft);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .card:hover { transform: translateY(-3px); box-shadow: 0 10px 24px rgba(26, 54, 93, 0.14); }
+  .card.completo { border-top-color: var(--green); background: #fbfefc; }
+  .card.pendente { border-top-color: var(--amber); }
+
+  .card-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 10px; }
+  .card-category {
+    font-size: 0.7em;
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    color: var(--navy-soft);
+    font-weight: bold;
+    margin-bottom: 6px;
+  }
+  .card h3 { color: var(--ink); margin: 0 0 2px; font-size: 1.12em; line-height: 1.25; }
+  .subtitle-pt { font-size: 0.85em; color: var(--ink-soft); margin: 0 0 10px; font-style: italic; }
+  .card p.desc { color: #4a5568; font-size: 0.9em; margin: 6px 0 0; }
+
+  .badge {
+    font-size: 0.68em;
+    font-weight: bold;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 4px 9px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+  .badge-open { background: var(--sand-deep); color: #6b5b3e; }
+  .badge-pending { background: var(--amber-soft); color: var(--amber); }
+  .badge-done { background: var(--green-soft); color: var(--green); }
+
+  .status-row {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 16px;
+    font-weight: bold;
+    font-size: 0.85em;
+    color: var(--ink-soft);
+  }
+  .progress-bg {
+    background: var(--line);
+    border-radius: 10px;
+    height: 12px;
+    width: 100%;
+    margin-top: 6px;
+    overflow: hidden;
+    display: flex;
+  }
+  .progress-fill { background: var(--green); height: 100%; transition: width 0.4s ease; }
+  .progress-reserved {
+    height: 100%;
+    background: repeating-linear-gradient(45deg, #ecc94b, #ecc94b 5px, #f6e05e 5px, #f6e05e 10px);
+    transition: width 0.4s ease;
+  }
+  .legend { display: flex; gap: 14px; font-size: 0.75em; color: var(--ink-soft); margin-top: 8px; flex-wrap: wrap; }
+  .legend i { width: 10px; height: 10px; border-radius: 3px; display: inline-block; margin-right: 5px; vertical-align: middle; }
+
+  /* ---------- Aviso de compra não confirmada ---------- */
+  .alert {
+    margin-top: 14px;
+    padding: 10px 12px;
+    border-radius: 10px;
+    font-size: 0.82em;
+    display: flex;
+    gap: 8px;
+    align-items: flex-start;
+    line-height: 1.35;
+  }
+  .alert-pending { background: var(--amber-soft); color: #7b5310; border: 1px solid #f0d9a3; }
+  .alert-expired { background: var(--red-soft); color: #8c2020; border: 1px solid #f5c2c2; }
+  .alert-done { background: var(--green-soft); color: #23603f; border: 1px solid #b7e2c9; }
+
+  /* ---------- Botões ---------- */
+  .btn {
+    background-color: var(--navy-soft);
+    color: #fff;
+    border: none;
+    padding: 12px;
+    border-radius: 8px;
+    width: 100%;
+    font-size: 0.98em;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 18px;
+    transition: background 0.2s;
+  }
+  .btn:hover:not(:disabled) { background-color: #2b4359; }
+  .btn:focus-visible { outline: 3px solid rgba(58, 90, 120, 0.5); outline-offset: 2px; }
+  .btn:disabled { background-color: #a0aec0; cursor: not-allowed; }
+  .btn-ghost { background: transparent; color: var(--navy-soft); border: 2px solid var(--navy-soft); }
+  .btn-ghost:hover:not(:disabled) { background: #eef3f8; color: var(--navy); }
+  .btn-green { background-color: var(--green); }
+  .btn-green:hover:not(:disabled) { background-color: #276749; }
+  .btn-cancel { background: #718096; }
+  .btn-cancel:hover:not(:disabled) { background: #4a5568; }
+  .btn-danger { background: var(--red); }
+  .btn-danger:hover:not(:disabled) { background: #9b2c2c; }
+  .btn-sm { padding: 8px 10px; font-size: 0.82em; margin-top: 0; width: auto; }
+
+  /* ---------- Modal ---------- */
+  .modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(15, 30, 45, 0.65);
+    display: none;
+    justify-content: center; align-items: center;
+    z-index: 1000;
+    padding: 16px;
+  }
+  .modal-overlay.open { display: flex; }
+  .modal {
+    background: #fff;
+    padding: 26px 24px;
+    border-radius: var(--radius);
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+  }
+  .modal h3 { margin: 0 0 2px; font-family: 'Georgia', serif; color: var(--navy); }
+  .modal label { display: block; text-align: left; font-size: 0.82em; font-weight: bold; color: var(--ink-soft); margin-bottom: 4px; }
+  .modal input {
+    width: 100%;
+    padding: 11px;
+    margin: 0 0 14px;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    font-size: 1em;
+    font-family: inherit;
+  }
+  .modal input:focus { outline: 3px solid rgba(58, 90, 120, 0.35); outline-offset: 1px; }
+  .modal-btns { display: flex; gap: 10px; }
+  .modal-btns button { flex: 1; margin-top: 10px; }
+  .modal-stack { display: flex; flex-direction: column; gap: 8px; }
+  .modal-stack button { width: 100%; margin-top: 4px; }
+  .hint { font-size: 0.8em; color: var(--ink-soft); margin: 10px 0 0; }
+  .error-msg { color: var(--red); font-size: 0.85em; font-weight: bold; min-height: 1.1em; margin: 0 0 6px; text-align: left; }
+
+  /* ---------- Minhas reservas ---------- */
+  .my-gifts {
+    background: var(--paper);
+    border-radius: var(--radius);
+    box-shadow: var(--shadow);
+    padding: 20px;
+    margin-top: 34px;
+    border-left: 5px solid var(--amber);
+  }
+  .my-gifts h2 { margin: 0 0 4px; font-family: 'Georgia', serif; color: var(--navy); font-size: 1.25em; }
+  .my-gifts .hint { margin-top: 0; }
+  .reserva {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
+    padding: 12px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .reserva:last-child { border-bottom: none; }
+  .reserva-info { flex: 1 1 220px; text-align: left; }
+  .reserva-info strong { display: block; font-size: 0.96em; }
+  .reserva-info small { color: var(--ink-soft); font-size: 0.8em; }
+  .reserva-acoes { display: flex; gap: 8px; flex-wrap: wrap; }
+
+  /* ---------- Toast ---------- */
+  .toast-wrap { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); z-index: 1500; display: flex; flex-direction: column; gap: 8px; width: min(92vw, 420px); }
+  .toast {
+    background: var(--navy-dark);
+    color: #fff;
+    padding: 13px 16px;
+    border-radius: 10px;
+    font-size: 0.9em;
+    box-shadow: 0 10px 26px rgba(0,0,0,0.25);
+    animation: slideUp 0.25s ease;
+  }
+  .toast.ok { background: var(--green); }
+  .toast.warn { background: var(--amber); }
+  .toast.err { background: var(--red); }
+  @keyframes slideUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: none; } }
+
+  .empty { text-align: center; color: var(--ink-soft); padding: 40px 20px; grid-column: 1 / -1; }
+
+  footer { text-align: center; padding: 26px 20px 40px; color: var(--ink-soft); font-size: 0.85em; }
+  footer button { background: none; border: none; color: var(--navy-soft); text-decoration: underline; cursor: pointer; font-size: 1em; font-family: inherit; }
+
+  .sr-only { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; border: 0; }
+
+  @media (max-width: 640px) {
+    .toolbar { flex-direction: column; align-items: stretch; }
+    .modal-btns { flex-direction: column; }
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { transition: none !important; animation: none !important; }
+  }
+</style>
+</head>
+<body>
+
+<a class="skip-link" href="#app">Ir para a lista de presentes</a>
+
+<header class="header">
+  <span class="anchor" aria-hidden="true">⚓</span>
+  <h1>Lista de Presentes do Richard</h1>
+  <p>Escolha um item, informe a quantidade e ajude a montar o enxoval completo. Depois de comprar, <strong>volte aqui e confirme a compra</strong> — assim ninguém compra o mesmo presente duas vezes.</p>
+</header>
+
+<section class="summary" aria-label="Resumo da lista">
+  <div class="summary-card is-done"><strong id="sum-confirmados">0</strong><span>Compras confirmadas</span></div>
+  <div class="summary-card is-pending"><strong id="sum-pendentes">0</strong><span>Aguardando confirmação</span></div>
+  <div class="summary-card"><strong id="sum-faltam">0</strong><span>Ainda faltam</span></div>
+  <div class="summary-card"><strong id="sum-pct">0%</strong><span>Enxoval completo</span></div>
+</section>
+
+<main class="container">
+
+  <div class="toolbar">
+    <div class="search-wrap">
+      <label class="sr-only" for="busca">Buscar presente</label>
+      <input type="search" id="busca" placeholder="Buscar presente… / Search gift…" autocomplete="off">
+    </div>
+    <div class="filters" id="filtros" role="group" aria-label="Filtrar por categoria"></div>
+  </div>
+
+  <div class="card-grid" id="app">
+    <!-- Os cards serão injetados aqui -->
+  </div>
+
+  <section class="my-gifts" id="minhas-reservas" hidden>
+    <h2>Meus presentes 🎁</h2>
+    <p class="hint">Estas são as reservas feitas neste dispositivo. Confirme quando a compra estiver feita — ou libere o item se mudar de ideia.</p>
+    <div id="lista-reservas"></div>
+  </section>
+
+</main>
+
+<footer>
+  <p>Feito com carinho para o Richard ⚓ · Os dados ficam salvos neste navegador.</p>
+  <p><button type="button" onclick="exportarDados()">Exportar reservas (JSON)</button> · <button type="button" onclick="limparMeusDados()">Apagar minhas reservas</button></p>
+</footer>
+
+<!-- Modal 1: reserva -->
+<div class="modal-overlay" id="modal" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+  <div class="modal">
+    <h3 id="modal-title">Presentear</h3>
+    <p id="modal-subtitle" class="subtitle-pt"></p>
+    <p id="modal-desc"></p>
+
+    <label for="modal-nome">Seu nome / Your name</label>
+    <input type="text" id="modal-nome" placeholder="Ex.: Ana e João" autocomplete="name">
+
+    <label for="modal-input">Quantidade / Quantity</label>
+    <input type="number" id="modal-input" min="1" value="1">
+
+    <p class="error-msg" id="modal-erro" role="alert"></p>
+    <p class="hint">Ao confirmar, o item fica <strong>reservado</strong> para você e a loja abre em uma nova aba. A reserva só vira compra confirmada quando você avisar aqui.</p>
+
+    <div class="modal-btns">
+      <button type="button" class="btn btn-cancel" onclick="fecharModal()">Cancelar</button>
+      <button type="button" class="btn" onclick="confirmarPresente()">Reservar e ir à loja</button>
+    </div>
+  </div>
+</div>
+
+<!-- Modal 2: aviso / confirmação de compra -->
+<div class="modal-overlay" id="modal-check" role="dialog" aria-modal="true" aria-labelledby="check-title">
+  <div class="modal">
+    <h3 id="check-title">Você conseguiu comprar? 🛒</h3>
+    <p id="check-desc" class="hint" style="margin-bottom:16px;"></p>
+    <div class="modal-stack">
+      <button type="button" class="btn btn-green" onclick="responderCompra('confirmado')">✅ Sim, já comprei</button>
+      <button type="button" class="btn btn-ghost" onclick="responderCompra('pendente')">⏳ Ainda não — vou comprar depois</button>
+      <button type="button" class="btn btn-danger" onclick="responderCompra('cancelado')">❌ Não vou comprar (liberar item)</button>
+    </div>
+    <p class="hint">Reservas sem confirmação são liberadas automaticamente depois de <strong id="check-ttl">3 dias</strong>, para o item não ficar preso na lista.</p>
+  </div>
+</div>
+
+<div class="toast-wrap" id="toasts" aria-live="polite" aria-atomic="false"></div>
+
+<script>
+  /* =========================================================
+     Catálogo de presentes
+     ========================================================= */
+  const produtos = [
+    // BANHO E HIGIENE
+    { id: 9,  categoria: "Bath & Hygiene", nome_en: "Baby Bath Tub with Stand", nome_pt: "Banheira com Suporte", desc: "Com termômetro embutido.", meta: 1, link: "https://www.amazon.co.uk/s?k=baby+bath+tub+with+stand" },
+    { id: 10, categoria: "Bath & Hygiene", nome_en: "Hooded Baby Towels", nome_pt: "Toalhas de Banho com Capuz", desc: "Algodão super macio.", meta: 4, link: "https://www.shein.co.uk/pdsearch/baby%20towel/" },
+    { id: 11, categoria: "Bath & Hygiene", nome_en: "Baby Grooming Kit", nome_pt: "Kit Higiene para o Quarto", desc: "Escova de cabelo, tesourinha, etc.", meta: 1, link: "https://www.amazon.co.uk/s?k=baby+grooming+kit" },
+    { id: 12, categoria: "Bath & Hygiene", nome_en: "Healthcare Kit", nome_pt: "Kit Farmácia Básica", desc: "Termômetro, Aspirador Nasal, Vick Baby.", meta: 1, link: "https://www.boots.com/search/baby+thermometer" },
+    { id: 13, categoria: "Bath & Hygiene", nome_en: "Dummy Clips", nome_pt: "Prendedores de Chupeta", desc: "Modelos em madeira/silicone.", meta: 3, link: "https://www.temu.com/uk/search_result.html?search_key=dummy+clip" },
+    { id: 14, categoria: "Bath & Hygiene", nome_en: "Baby Toiletries Set", nome_pt: "Kit Cosméticos para Bebê", desc: "Shampoo, Creme, Óleo, Pomadas.", meta: 2, link: "https://www.boots.com/search/sudocrem" },
+
+    // QUARTO E PASSEIO
+    { id: 15, categoria: "Nursery & Outing", nome_en: "Bedding Set & Blankets", nome_pt: "Protetor, Lençóis e Mantas", desc: "Para montar o bercinho aconchegante.", meta: 4, link: "https://www.ikea.com/gb/en/search/?q=baby%20bedding" },
+    { id: 16, categoria: "Nursery & Outing", nome_en: "Muslin Squares", nome_pt: "Fraldas de Boca (Muselinas)", desc: "O item mais usado nos primeiros meses.", meta: 10, link: "https://www.amazon.co.uk/s?k=muslin+squares" },
+    { id: 17, categoria: "Nursery & Outing", nome_en: "Baby Sleeping Bags", nome_pt: "Sacos de Dormir (Swaddle)", desc: "Para noites seguras e quentinhas.", meta: 2, link: "https://www.amazon.co.uk/s?k=baby+sleeping+bag" },
+    { id: 19, categoria: "Nursery & Outing", nome_en: "Baby Video Monitor", nome_pt: "Babá Eletrônica", desc: "Monitor com vídeo para segurança.", meta: 1, link: "https://www.amazon.co.uk/s?k=baby+monitor" },
+    { id: 20, categoria: "Nursery & Outing", nome_en: "Nappy Changing Bag", nome_pt: "Bolsa Maternidade", desc: "Mochila espaçosa com divisórias.", meta: 1, link: "https://www.shein.co.uk/pdsearch/nappy%20bag/" },
+    { id: 21, categoria: "Nursery & Outing", nome_en: "Baby Play Mat", nome_pt: "Tapete de Atividades", desc: "Para o Tummy Time e estímulos.", meta: 1, link: "https://www.amazon.co.uk/s?k=baby+play+mat" },
+
+    // ROUPAS
+    { id: 22, categoria: "Clothing", nome_en: "Long Sleeve Bodysuits", nome_pt: "Bodys de Manga Longa", desc: "Base de roupas (Tamanho 0-3M e 3-6M).", meta: 10, link: "https://www.shein.co.uk/pdsearch/baby%20boy%20long%20sleeve%20bodysuit/" },
+    { id: 23, categoria: "Clothing", nome_en: "Winter Sleepsuits", nome_pt: "Macacões de Inverno com Pé", desc: "Macacão quentinho para dormir.", meta: 8, link: "https://www.shein.co.uk/pdsearch/baby%20boy%20winter%20sleepsuit/" },
+    { id: 24, categoria: "Clothing", nome_en: "Knitted Cardigans", nome_pt: "Casacos de Tricô", desc: "Casacos fáceis de vestir.", meta: 3, link: "https://www.shein.co.uk/pdsearch/baby%20boy%20knit%20cardigan/" },
+    { id: 25, categoria: "Clothing", nome_en: "Winter Pramsuit", nome_pt: "Macacão de Neve", desc: "Garante o passeio no inverno de Londres.", meta: 1, link: "https://www.temu.com/uk/search_result.html?search_key=baby+boy+pramsuit" },
+    { id: 26, categoria: "Clothing", nome_en: "Hats, Mittens & Socks", nome_pt: "Kit de Toucas, Luvinhas e Meias", desc: "Acessórios de inverno.", meta: 3, link: "https://www.temu.com/uk/search_result.html?search_key=baby+winter+hat+set" },
+    { id: 27, categoria: "Clothing", nome_en: "Cotton Joggers", nome_pt: "Calças de Moletom (Joggers)", desc: "Perfeitas para a fase de engatinhar.", meta: 7, link: "https://www.temu.com/uk/search_result.html?search_key=baby+boy+cotton+trousers" }
+  ];
+
+  /* =========================================================
+     Estado persistido (localStorage)
+     ========================================================= */
+  const STORAGE_KEY = 'richard-cha-de-bebe-v2';
+  const TTL_HORAS = 72;          // reserva sem confirmação expira em 3 dias
+  const AVISO_HORAS = 24;        // depois disso já mostramos "confirme sua compra"
+
+  let estado = carregarEstado();
+  let itemAtual = null;
+  let reservaPendenteDeResposta = null;
+  let filtroAtual = 'Todos';
+  let termoBusca = '';
+  let ultimoFoco = null;
+
+  function carregarEstado() {
+    const vazio = { dispositivoId: novoId(), nome: '', reservas: [] };
+    try {
+      const bruto = localStorage.getItem(STORAGE_KEY);
+      if (!bruto) return vazio;
+      const dados = JSON.parse(bruto);
+      if (!dados || !Array.isArray(dados.reservas)) return vazio;
+      return {
+        dispositivoId: dados.dispositivoId || novoId(),
+        nome: typeof dados.nome === 'string' ? dados.nome : '',
+        reservas: dados.reservas
+      };
+    } catch (e) {
+      console.warn('Não foi possível ler os dados salvos:', e);
+      return vazio;
+    }
+  }
+
+  function salvarEstado() {
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(estado));
+    } catch (e) {
+      toast('Não consegui salvar no navegador — anote seu presente para não esquecer.', 'warn');
+    }
+  }
+
+  function novoId() {
+    return 'r-' + Date.now().toString(36) + '-' + Math.random().toString(36).slice(2, 8);
+  }
+
+  /* =========================================================
+     Regras de reserva / confirmação
+     ========================================================= */
+  function horasDesde(iso) {
+    return (Date.now() - new Date(iso).getTime()) / 36e5;
+  }
+
+  // Reserva pendente que passou do prazo é considerada expirada e devolve o item à lista.
+  function expirada(r) {
+    return r.status === 'pendente' && horasDesde(r.criadoEm) > TTL_HORAS;
+  }
+
+  function statusEfetivo(r) {
+    if (r.status === 'pendente' && expirada(r)) return 'expirado';
+    return r.status;
+  }
+
+  function reservasDoProduto(id) {
+    return estado.reservas.filter(r => r.produtoId === id && statusEfetivo(r) !== 'cancelado');
+  }
+
+  function resumoProduto(p) {
+    const rs = reservasDoProduto(p.id);
+    const confirmados = rs.filter(r => statusEfetivo(r) === 'confirmado').reduce((s, r) => s + r.qtd, 0);
+    const pendentes   = rs.filter(r => statusEfetivo(r) === 'pendente').reduce((s, r) => s + r.qtd, 0);
+    const expirados   = rs.filter(r => statusEfetivo(r) === 'expirado').reduce((s, r) => s + r.qtd, 0);
+    const aguardando  = rs.filter(r => statusEfetivo(r) === 'pendente' && horasDesde(r.criadoEm) > AVISO_HORAS).length;
+    const disponivel  = Math.max(0, p.meta - confirmados - pendentes);
+    return { confirmados, pendentes, expirados, aguardando, disponivel, completo: confirmados >= p.meta };
+  }
+
+  /* =========================================================
+     Renderização
+     ========================================================= */
+  function esc(txt) {
+    return String(txt).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  }
+
+  function renderizarFiltros() {
+    const categorias = ['Todos', ...new Set(produtos.map(p => p.categoria))];
+    const rotulos = { 'Todos': 'All / Todos' };
+    const box = document.getElementById('filtros');
+    box.innerHTML = '';
+    categorias.forEach(cat => {
+      const b = document.createElement('button');
+      b.type = 'button';
+      b.className = 'filter-btn' + (cat === filtroAtual ? ' active' : '');
+      b.textContent = rotulos[cat] || cat;
+      b.setAttribute('aria-pressed', String(cat === filtroAtual));
+      b.addEventListener('click', () => filtrar(cat));
+      box.appendChild(b);
+    });
+  }
+
+  function renderizarResumoGeral() {
+    let metaTotal = 0, confirmados = 0, pendentes = 0;
+    produtos.forEach(p => {
+      const s = resumoProduto(p);
+      metaTotal += p.meta;
+      confirmados += Math.min(s.confirmados, p.meta);
+      pendentes += s.pendentes;
+    });
+    const faltam = Math.max(0, metaTotal - confirmados - pendentes);
+    const pct = metaTotal ? Math.round((confirmados / metaTotal) * 100) : 0;
+    document.getElementById('sum-confirmados').textContent = confirmados;
+    document.getElementById('sum-pendentes').textContent = pendentes;
+    document.getElementById('sum-faltam').textContent = faltam;
+    document.getElementById('sum-pct').textContent = pct + '%';
+  }
+
+  function renderizarCards() {
+    const app = document.getElementById('app');
+    const busca = termoBusca.trim().toLowerCase();
+
+    const lista = produtos.filter(p => {
+      const okCategoria = filtroAtual === 'Todos' || p.categoria === filtroAtual;
+      const okBusca = !busca ||
+        p.nome_en.toLowerCase().includes(busca) ||
+        p.nome_pt.toLowerCase().includes(busca) ||
+        p.desc.toLowerCase().includes(busca);
+      return okCategoria && okBusca;
+    });
+
+    app.innerHTML = '';
+
+    if (!lista.length) {
+      app.innerHTML = '<p class="empty">Nenhum presente encontrado com esse filtro. 🔍</p>';
+      return;
+    }
+
+    lista.forEach(p => {
+      const s = resumoProduto(p);
+      const pctConfirmado = Math.min(100, (s.confirmados / p.meta) * 100);
+      const pctReservado = Math.min(100 - pctConfirmado, (s.pendentes / p.meta) * 100);
+
+      let badge = '<span class="badge badge-open">Disponível</span>';
+      let classe = '';
+      if (s.completo) { badge = '<span class="badge badge-done">Meta atingida</span>'; classe = ' completo'; }
+      else if (s.disponivel === 0) { badge = '<span class="badge badge-pending">Reservado</span>'; classe = ' pendente'; }
+      else if (s.pendentes > 0) { badge = '<span class="badge badge-pending">Parcialmente reservado</span>'; classe = ' pendente'; }
+
+      // ---- Avisos de compra confirmada / não confirmada ----
+      let avisos = '';
+      if (s.confirmados > 0) {
+        avisos += `<div class="alert alert-done"><span aria-hidden="true">✅</span><span><strong>${s.confirmados} unidade(s) com compra confirmada.</strong> Obrigado!</span></div>`;
+      }
+      if (s.pendentes > 0) {
+        const extra = s.aguardando > 0
+          ? ` ${s.aguardando} reserva(s) já passou de ${AVISO_HORAS}h sem confirmação — se foi você, confirme em “Meus presentes”.`
+          : '';
+        avisos += `<div class="alert alert-pending"><span aria-hidden="true">⏳</span><span><strong>${s.pendentes} unidade(s) reservada(s), mas ainda sem confirmação de compra.</strong>${esc(extra)}</span></div>`;
+      }
+      if (s.expirados > 0) {
+        avisos += `<div class="alert alert-expired"><span aria-hidden="true">⚠️</span><span>${s.expirados} reserva(s) expirou sem confirmação e o item voltou a ficar disponível.</span></div>`;
+      }
+
+      const podeReservar = !s.completo && s.disponivel > 0;
+      const textoBotao = s.completo ? 'Meta atingida! ⚓' : (s.disponivel === 0 ? 'Tudo reservado — aguardando confirmação' : 'Quero presentear');
+
+      const card = document.createElement('div');
+      card.className = 'card' + classe;
+      card.innerHTML = `
+        <div>
+          <div class="card-top">
+            <div class="card-category">${esc(p.categoria)}</div>
+            ${badge}
+          </div>
+          <h3>${esc(p.nome_en)}</h3>
+          <p class="subtitle-pt">${esc(p.nome_pt)}</p>
+          <p class="desc">${esc(p.desc)}</p>
+
+          <div class="status-row">
+            <span>Meta: ${p.meta}</span>
+            <span style="color:${s.completo ? 'var(--green)' : 'var(--red)'}">Faltam: ${Math.max(0, p.meta - s.confirmados)}</span>
+          </div>
+          <div class="progress-bg" role="img" aria-label="${s.confirmados} de ${p.meta} confirmados, ${s.pendentes} reservados">
+            <div class="progress-fill" style="width:${pctConfirmado}%"></div>
+            <div class="progress-reserved" style="width:${pctReservado}%"></div>
+          </div>
+          <div class="legend">
+            <span><i style="background:var(--green)"></i>Comprado: ${s.confirmados}</span>
+            <span><i style="background:#ecc94b"></i>Reservado: ${s.pendentes}</span>
+          </div>
+          ${avisos}
+        </div>
+        <button type="button" class="btn" ${podeReservar ? '' : 'disabled'} data-id="${p.id}">${textoBotao}</button>
+      `;
+      const botao = card.querySelector('button[data-id]');
+      if (podeReservar) botao.addEventListener('click', () => abrirModal(p.id));
+      app.appendChild(card);
+    });
+  }
+
+  function renderizarMinhasReservas() {
+    const secao = document.getElementById('minhas-reservas');
+    const box = document.getElementById('lista-reservas');
+    const minhas = estado.reservas
+      .filter(r => r.dispositivoId === estado.dispositivoId && statusEfetivo(r) !== 'cancelado')
+      .sort((a, b) => new Date(b.criadoEm) - new Date(a.criadoEm));
+
+    if (!minhas.length) { secao.hidden = true; box.innerHTML = ''; return; }
+
+    secao.hidden = false;
+    box.innerHTML = '';
+
+    minhas.forEach(r => {
+      const p = produtos.find(x => x.id === r.produtoId);
+      if (!p) return;
+      const st = statusEfetivo(r);
+      const horas = Math.floor(horasDesde(r.criadoEm));
+      const quando = horas < 1 ? 'agora há pouco' : (horas < 24 ? `há ${horas}h` : `há ${Math.floor(horas / 24)} dia(s)`);
+
+      let situacao, acoes;
+      if (st === 'confirmado') {
+        situacao = `<small style="color:var(--green)">✅ Compra confirmada ${quando}</small>`;
+        acoes = `<button type="button" class="btn btn-sm btn-cancel" data-acao="desfazer" data-id="${r.id}">Desfazer confirmação</button>`;
+      } else if (st === 'expirado') {
+        situacao = `<small style="color:var(--red)">⚠️ Reserva expirada (${quando}) — o item voltou para a lista</small>`;
+        acoes = `<button type="button" class="btn btn-sm btn-green" data-acao="confirmar" data-id="${r.id}">Comprei mesmo assim</button>
+                 <button type="button" class="btn btn-sm btn-danger" data-acao="cancelar" data-id="${r.id}">Remover</button>`;
+      } else {
+        situacao = `<small style="color:var(--amber)">⏳ Reservado ${quando} — <strong>compra ainda não confirmada</strong></small>`;
+        acoes = `<button type="button" class="btn btn-sm btn-green" data-acao="confirmar" data-id="${r.id}">✅ Já comprei</button>
+                 <button type="button" class="btn btn-sm btn-ghost" data-acao="loja" data-id="${r.id}">Abrir loja</button>
+                 <button type="button" class="btn btn-sm btn-danger" data-acao="cancelar" data-id="${r.id}">Liberar</button>`;
+      }
+
+      const div = document.createElement('div');
+      div.className = 'reserva';
+      div.innerHTML = `
+        <div class="reserva-info">
+          <strong>${r.qtd}× ${esc(p.nome_en)}</strong>
+          <small>${esc(p.nome_pt)}</small><br>
+          ${situacao}
+        </div>
+        <div class="reserva-acoes">${acoes}</div>
+      `;
+      box.appendChild(div);
+    });
+
+    box.querySelectorAll('button[data-acao]').forEach(b => {
+      b.addEventListener('click', () => acaoReserva(b.dataset.acao, b.dataset.id));
+    });
+  }
+
+  function renderTudo() {
+    renderizarResumoGeral();
+    renderizarCards();
+    renderizarMinhasReservas();
+  }
+
+  /* =========================================================
+     Ações
+     ========================================================= */
+  function filtrar(categoria) {
+    filtroAtual = categoria;
+    renderizarFiltros();
+    renderizarCards();
+  }
+
+  function abrirModal(id) {
+    itemAtual = produtos.find(p => p.id === id);
+    if (!itemAtual) return;
+    const s = resumoProduto(itemAtual);
+
+    document.getElementById('modal-title').textContent = itemAtual.nome_en;
+    document.getElementById('modal-subtitle').textContent = itemAtual.nome_pt;
+    document.getElementById('modal-desc').textContent =
+      `Ainda faltam ${s.disponivel} unidade(s) disponível(is). Quantas você quer presentear?`;
+
+    const input = document.getElementById('modal-input');
+    input.max = s.disponivel;
+    input.value = 1;
+    document.getElementById('modal-nome').value = estado.nome || '';
+    document.getElementById('modal-erro').textContent = '';
+
+    abrir('modal');
+    setTimeout(() => document.getElementById('modal-nome').focus(), 50);
+  }
+
+  function fecharModal() { fechar('modal'); itemAtual = null; }
+
+  function confirmarPresente() {
+    if (!itemAtual) return;
+    const erro = document.getElementById('modal-erro');
+    const nome = document.getElementById('modal-nome').value.trim();
+    const qtd = parseInt(document.getElementById('modal-input').value, 10);
+    const s = resumoProduto(itemAtual);
+
+    if (nome.length < 2) { erro.textContent = 'Por favor, escreva seu nome — assim os pais sabem quem presenteou.'; return; }
+    if (isNaN(qtd) || qtd <= 0) { erro.textContent = 'Informe uma quantidade válida.'; return; }
+    if (qtd > s.disponivel) { erro.textContent = `Só restam ${s.disponivel} unidade(s) disponível(is).`; return; }
+
+    const reserva = {
+      id: novoId(),
+      dispositivoId: estado.dispositivoId,
+      produtoId: itemAtual.id,
+      nome: nome,
+      qtd: qtd,
+      status: 'pendente',
+      criadoEm: new Date().toISOString(),
+      confirmadoEm: null
+    };
+
+    estado.nome = nome;
+    estado.reservas.push(reserva);
+    salvarEstado();
+
+    const produto = itemAtual;
+    fecharModal();
+    renderTudo();
+
+    window.open(produto.link, '_blank', 'noopener');
+
+    // O aviso: perguntamos explicitamente se a compra aconteceu.
+    reservaPendenteDeResposta = reserva.id;
+    document.getElementById('check-desc').textContent =
+      `Você reservou ${qtd}× ${produto.nome_en} (${produto.nome_pt}). A loja abriu em outra aba — quando terminar, responda aqui.`;
+    document.getElementById('check-ttl').textContent = `${Math.round(TTL_HORAS / 24)} dias`;
+    abrir('modal-check');
+  }
+
+  function responderCompra(resposta) {
+    const r = estado.reservas.find(x => x.id === reservaPendenteDeResposta);
+    fechar('modal-check');
+    reservaPendenteDeResposta = null;
+    if (!r) return;
+
+    if (resposta === 'confirmado') {
+      r.status = 'confirmado';
+      r.confirmadoEm = new Date().toISOString();
+      toast('Compra confirmada! Muito obrigado ⚓', 'ok');
+    } else if (resposta === 'cancelado') {
+      r.status = 'cancelado';
+      toast('Sem problemas — o item voltou para a lista.', 'warn');
+    } else {
+      toast(`Reserva guardada. Volte aqui para confirmar em até ${Math.round(TTL_HORAS / 24)} dias, senão o item é liberado.`, 'warn');
+    }
+
+    salvarEstado();
+    renderTudo();
+  }
+
+  function acaoReserva(acao, reservaId) {
+    const r = estado.reservas.find(x => x.id === reservaId);
+    if (!r) return;
+    const p = produtos.find(x => x.id === r.produtoId);
+
+    if (acao === 'confirmar') {
+      r.status = 'confirmado';
+      r.criadoEm = r.criadoEm || new Date().toISOString();
+      r.confirmadoEm = new Date().toISOString();
+      toast('Compra confirmada! Obrigado ⚓', 'ok');
+    } else if (acao === 'desfazer') {
+      r.status = 'pendente';
+      r.criadoEm = new Date().toISOString();
+      r.confirmadoEm = null;
+      toast('Confirmação desfeita — a reserva voltou a ficar pendente.', 'warn');
+    } else if (acao === 'cancelar') {
+      if (!confirm('Tem certeza que quer liberar este item para outra pessoa?')) return;
+      r.status = 'cancelado';
+      toast('Item liberado para outros convidados.', 'warn');
+    } else if (acao === 'loja') {
+      if (p) window.open(p.link, '_blank', 'noopener');
+      return;
+    }
+
+    salvarEstado();
+    renderTudo();
+  }
+
+  /* =========================================================
+     Utilidades: modal, toast, dados
+     ========================================================= */
+  function abrir(id) {
+    ultimoFoco = document.activeElement;
+    document.getElementById(id).classList.add('open');
+    document.body.style.overflow = 'hidden';
+  }
+
+  function fechar(id) {
+    document.getElementById(id).classList.remove('open');
+    if (!document.querySelector('.modal-overlay.open')) document.body.style.overflow = '';
+    if (ultimoFoco && typeof ultimoFoco.focus === 'function') ultimoFoco.focus();
+  }
+
+  function toast(msg, tipo) {
+    const box = document.getElementById('toasts');
+    const el = document.createElement('div');
+    el.className = 'toast ' + (tipo || '');
+    el.textContent = msg;
+    box.appendChild(el);
+    setTimeout(() => el.remove(), 6000);
+  }
+
+  function exportarDados() {
+    const dados = estado.reservas.map(r => {
+      const p = produtos.find(x => x.id === r.produtoId);
+      return {
+        presente: p ? p.nome_en : r.produtoId,
+        presente_pt: p ? p.nome_pt : '',
+        convidado: r.nome,
+        quantidade: r.qtd,
+        status: statusEfetivo(r),
+        reservado_em: r.criadoEm,
+        confirmado_em: r.confirmadoEm
+      };
+    });
+    const blob = new Blob([JSON.stringify(dados, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'presentes-richard.json';
+    a.click();
+    URL.revokeObjectURL(url);
+  }
+
+  function limparMeusDados() {
+    if (!confirm('Isto apaga todas as reservas salvas neste navegador. Continuar?')) return;
+    estado = { dispositivoId: novoId(), nome: '', reservas: [] };
+    salvarEstado();
+    renderTudo();
+    toast('Reservas apagadas deste dispositivo.', 'warn');
+  }
+
+  /* =========================================================
+     Eventos globais
+     ========================================================= */
+  document.getElementById('busca').addEventListener('input', e => {
+    termoBusca = e.target.value;
+    renderizarCards();
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+      if (document.getElementById('modal').classList.contains('open')) fecharModal();
+      else if (document.getElementById('modal-check').classList.contains('open')) responderCompra('pendente');
+    }
+  });
+
+  document.getElementById('modal').addEventListener('click', e => {
+    if (e.target.id === 'modal') fecharModal();
+  });
+
+  document.getElementById('modal-input').addEventListener('keydown', e => {
+    if (e.key === 'Enter') confirmarPresente();
+  });
+
+  // Lembrete ao voltar para a aba: existe compra sem confirmação?
+  let ultimoLembrete = 0;
+  function lembrarPendentes() {
+    if (Date.now() - ultimoLembrete < 60000) return;          // no máximo 1 lembrete por minuto
+    if (document.querySelector('.modal-overlay.open')) return;
+    const pendentesMinhas = estado.reservas.filter(r =>
+      r.dispositivoId === estado.dispositivoId && statusEfetivo(r) === 'pendente'
+    );
+    if (!pendentesMinhas.length) return;
+    ultimoLembrete = Date.now();
+    renderTudo();
+    toast(`Você tem ${pendentesMinhas.length} presente(s) reservado(s) sem confirmação de compra. Confirme em “Meus presentes”.`, 'warn');
+  }
+  window.addEventListener('focus', lembrarPendentes);
+
+  /* =========================================================
+     Inicialização
+     ========================================================= */
+  renderizarFiltros();
+  renderTudo();
+  setTimeout(lembrarPendentes, 900);   // avisa quem já reservou e ainda não confirmou
+</script>
+</body>
+</html>
