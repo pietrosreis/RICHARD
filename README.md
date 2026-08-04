@@ -4,8 +4,14 @@ Lista de presentes do chá de bebê do Richard — página única, sem back-end.
 
 ## Como usar
 
-Abra `index.html` no navegador, ou publique o arquivo em qualquer hospedagem estática
-(GitHub Pages, Netlify, Vercel). Não há build nem dependências.
+Abra `index.html` no navegador. Não há build nem dependências.
+
+## Publicação
+
+O workflow `.github/workflows/pages.yml` liga o GitHub Pages (`configure-pages` com
+`enablement: true`) e publica a raiz do repositório a cada push na `main`. O endereço
+do site aparece em **Actions → Publicar site no GitHub Pages → deploy**, e também em
+**Settings → Pages**.
 
 ## Como funciona a confirmação de compra
 
