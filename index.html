@@ -67,6 +67,32 @@
     max-width: 640px;
     margin: 12px auto 0;
   }
+  .sync-status {
+    font-size: 0.82em !important;
+    color: #b9d0e6 !important;
+    margin-top: 14px !important;
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+    background: rgba(255,255,255,0.08);
+    padding: 6px 14px;
+    border-radius: 999px;
+  }
+  .sync-status.offline { background: rgba(236, 201, 75, 0.18); color: #f6e3b0 !important; }
+  .sync-status button {
+    background: none;
+    border: 1px solid rgba(255,255,255,0.4);
+    color: inherit;
+    border-radius: 999px;
+    padding: 3px 10px;
+    font-size: 0.95em;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .sync-status button:hover { background: rgba(255,255,255,0.15); }
+  .sync-status button[disabled] { opacity: 0.5; cursor: progress; }
 
   /* ---------- Resumo geral ---------- */
   .summary {
@@ -354,6 +380,10 @@
   <span class="anchor" aria-hidden="true">⚓</span>
   <h1>Lista de Presentes do Richard</h1>
   <p>Escolha um item, informe a quantidade e ajude a montar o enxoval completo. Depois de comprar, <strong>volte aqui e confirme a compra</strong> — assim ninguém compra o mesmo presente duas vezes.</p>
+  <p class="sync-status" id="sync-status" aria-live="polite">
+    <span id="sync-texto">Conectando à lista…</span>
+    <button type="button" id="sync-btn" onclick="sincronizar(true)">Atualizar</button>
+  </p>
 </header>
 
 <section class="summary" aria-label="Resumo da lista">
@@ -460,6 +490,17 @@
   ];
 
   /* =========================================================
+     Servidor compartilhado (Supabase)
+     Deixe `url` vazio para rodar apenas com os dados do navegador.
+     ========================================================= */
+  const SUPABASE = {
+    url: 'https://zsivjijnljfexqyqmbnb.supabase.co',
+    chave: 'sb_publishable_DTHY6sdjngeoTLBhnqZ0Xw_JYFFE3tu',   // chave pública (só lê/grava reservas, protegida por RLS)
+    tabela: 'richard_reservas'
+  };
+  const SYNC_INTERVALO = 20000;  // recarrega a lista a cada 20s
+
+  /* =========================================================
      Estado persistido (localStorage)
      ========================================================= */
   const STORAGE_KEY = 'richard-cha-de-bebe-v2';
@@ -467,6 +508,10 @@
   const AVISO_HORAS = 24;        // depois disso já mostramos "confirme sua compra"
 
   let estado = carregarEstado();
+  let reservasRemotas = estado.cacheRemoto || [];   // reservas de todos os convidados, vindas do servidor
+  let online = false;            // conseguimos falar com o servidor?
+  let sincronizando = false;
+  let ultimaSync = estado.ultimaSync ? new Date(estado.ultimaSync) : null;
   let itemAtual = null;
   let reservaPendenteDeResposta = null;
   let filtroAtual = 'Todos';
@@ -474,7 +519,7 @@
   let ultimoFoco = null;
 
   function carregarEstado() {
-    const vazio = { dispositivoId: novoId(), nome: '', reservas: [] };
+    const vazio = { dispositivoId: novoId(), nome: '', reservas: [], cacheRemoto: [] };
     try {
       const bruto = localStorage.getItem(STORAGE_KEY);
       if (!bruto) return vazio;
@@ -483,7 +528,14 @@
       return {
         dispositivoId: dados.dispositivoId || novoId(),
         nome: typeof dados.nome === 'string' ? dados.nome : '',
-        reservas: dados.reservas
+        // reservas gravadas antes do servidor existir entram na fila de envio
+        reservas: dados.reservas.map(r => ({
+          ...r,
+          servidorId: r.servidorId || null,
+          pendenteSync: r.pendenteSync !== undefined ? r.pendenteSync : !r.servidorId
+        })),
+        cacheRemoto: Array.isArray(dados.cacheRemoto) ? dados.cacheRemoto : [],
+        ultimaSync: dados.ultimaSync || null
       };
     } catch (e) {
       console.warn('Não foi possível ler os dados salvos:', e);
@@ -504,6 +556,156 @@
   }
 
   /* =========================================================
+     Sincronização com o servidor
+     ========================================================= */
+  const servidorAtivo = () => Boolean(SUPABASE.url && SUPABASE.chave);
+
+  async function api(caminho, opcoes = {}) {
+    const resp = await fetch(`${SUPABASE.url}/rest/v1/${caminho}`, {
+      ...opcoes,
+      headers: {
+        'apikey': SUPABASE.chave,
+        'Authorization': 'Bearer ' + SUPABASE.chave,
+        'Content-Type': 'application/json',
+        'x-dispositivo-id': estado.dispositivoId,     // identifica o aparelho para as regras de acesso
+        ...(opcoes.headers || {})
+      }
+    });
+    if (!resp.ok) throw new Error(`${resp.status} ${await resp.text()}`);
+    return resp.status === 204 ? null : resp.json();
+  }
+
+  function daLinha(l) {
+    return {
+      servidorId: l.id,
+      dispositivoId: l.dispositivo_id,
+      produtoId: l.produto_id,
+      nome: l.nome,
+      qtd: l.qtd,
+      status: l.status,
+      criadoEm: l.criado_em,
+      confirmadoEm: l.confirmado_em,
+      pendenteSync: false
+    };
+  }
+
+  // Fonte da verdade para os contadores: a lista do servidor (ou o último retrato dela,
+  // se a conexão caiu) com as minhas alterações locais por cima.
+  function todasReservas() {
+    const base = online ? reservasRemotas : (estado.cacheRemoto || []);
+    const mapa = new Map(base.map(r => [r.servidorId, r]));
+    estado.reservas.forEach(r => mapa.set(r.servidorId || r.id, r));
+    return [...mapa.values()];
+  }
+
+  async function enviarStatus(r) {
+    await api(`${SUPABASE.tabela}?id=eq.${encodeURIComponent(r.servidorId)}`, {
+      method: 'PATCH',
+      body: JSON.stringify({ status: r.status, confirmado_em: r.confirmadoEm })
+    });
+  }
+
+  async function enviarReserva(r) {
+    try {
+      if (!r.servidorId) {
+        const linhas = await api(SUPABASE.tabela, {
+          method: 'POST',
+          headers: { 'Prefer': 'return=representation' },
+          body: JSON.stringify({
+            dispositivo_id: estado.dispositivoId,
+            produto_id: r.produtoId,
+            nome: r.nome,
+            qtd: r.qtd
+          })
+        });
+        r.servidorId = linhas[0].id;
+        r.criadoEm = linhas[0].criado_em;
+        if (r.status !== 'pendente') await enviarStatus(r);   // já nasceu confirmada/cancelada
+      } else {
+        await enviarStatus(r);
+      }
+      r.pendenteSync = false;
+      salvarEstado();
+      return true;
+    } catch (e) {
+      r.pendenteSync = true;      // tenta de novo na próxima sincronização
+      salvarEstado();
+      definirOnline(false);
+      return false;
+    }
+  }
+
+  async function sincronizar(manual) {
+    if (!servidorAtivo() || sincronizando) return;
+    sincronizando = true;
+    mostrarSync('sincronizando');
+    try {
+      // 1) sobe o que ficou pendente (reservas feitas sem conexão)
+      for (const r of estado.reservas.filter(r => r.pendenteSync)) {
+        await enviarReserva(r);
+      }
+      // 2) baixa a lista completa de todos os convidados
+      const linhas = await api(`${SUPABASE.tabela}?select=*&order=criado_em.asc`);
+      reservasRemotas = linhas.map(daLinha);
+
+      // 3) espelha nas minhas reservas o que o servidor diz
+      estado.reservas.forEach(r => {
+        const remota = reservasRemotas.find(x => x.servidorId === r.servidorId);
+        if (remota && !r.pendenteSync) {
+          r.status = remota.status;
+          r.confirmadoEm = remota.confirmadoEm;
+        }
+      });
+
+      ultimaSync = new Date();
+      estado.cacheRemoto = reservasRemotas;   // continua valendo se a conexão cair
+      estado.ultimaSync = ultimaSync.toISOString();
+      definirOnline(true);
+      salvarEstado();
+      if (manual) toast('Lista atualizada.', 'ok');
+    } catch (e) {
+      definirOnline(false);
+      if (manual) toast('Não consegui falar com o servidor. Mostrando só as suas reservas.', 'warn');
+    } finally {
+      sincronizando = false;
+      renderTudo();
+    }
+  }
+
+  function definirOnline(valor) {
+    online = valor;
+    mostrarSync(valor ? 'ok' : 'offline');
+  }
+
+  function mostrarSync(situacao) {
+    const caixa = document.getElementById('sync-status');
+    const texto = document.getElementById('sync-texto');
+    const botao = document.getElementById('sync-btn');
+    if (!servidorAtivo()) {
+      caixa.classList.add('offline');
+      texto.textContent = 'Lista local — as reservas ficam só neste aparelho.';
+      botao.hidden = true;
+      return;
+    }
+    botao.hidden = false;
+    botao.disabled = situacao === 'sincronizando';
+    if (situacao === 'sincronizando') {
+      texto.textContent = 'Sincronizando…';
+    } else if (situacao === 'ok') {
+      const hora = ultimaSync ? ultimaSync.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' }) : '';
+      caixa.classList.remove('offline');
+      texto.textContent = `🟢 Lista compartilhada com todos os convidados${hora ? ' · atualizada às ' + hora : ''}`;
+    } else {
+      caixa.classList.add('offline');
+      const naFila = estado.reservas.filter(r => r.pendenteSync).length;
+      const desde = ultimaSync ? ` · última atualização às ${ultimaSync.toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' })}` : '';
+      texto.textContent = naFila
+        ? `🟠 Sem conexão — ${naFila} reserva(s) ainda não enviada(s) aos outros convidados${desde}`
+        : `🟠 Sem conexão com o servidor${desde || ' — mostrando apenas as suas reservas'}`;
+    }
+  }
+
+  /* =========================================================
      Regras de reserva / confirmação
      ========================================================= */
   function horasDesde(iso) {
@@ -521,7 +723,7 @@
   }
 
   function reservasDoProduto(id) {
-    return estado.reservas.filter(r => r.produtoId === id && statusEfetivo(r) !== 'cancelado');
+    return todasReservas().filter(r => r.produtoId === id && statusEfetivo(r) !== 'cancelado');
   }
 
   function resumoProduto(p) {
@@ -531,7 +733,13 @@
     const expirados   = rs.filter(r => statusEfetivo(r) === 'expirado').reduce((s, r) => s + r.qtd, 0);
     const aguardando  = rs.filter(r => statusEfetivo(r) === 'pendente' && horasDesde(r.criadoEm) > AVISO_HORAS).length;
     const disponivel  = Math.max(0, p.meta - confirmados - pendentes);
-    return { confirmados, pendentes, expirados, aguardando, disponivel, completo: confirmados >= p.meta };
+    const nomes = st => [...new Set(rs.filter(r => statusEfetivo(r) === st).map(r => r.nome))].join(', ');
+    return {
+      confirmados, pendentes, expirados, aguardando, disponivel,
+      quemConfirmou: nomes('confirmado'),
+      quemReservou: nomes('pendente'),
+      completo: confirmados >= p.meta
+    };
   }
 
   /* =========================================================
@@ -607,13 +815,15 @@
       // ---- Avisos de compra confirmada / não confirmada ----
       let avisos = '';
       if (s.confirmados > 0) {
-        avisos += `<div class="alert alert-done"><span aria-hidden="true">✅</span><span><strong>${s.confirmados} unidade(s) com compra confirmada.</strong> Obrigado!</span></div>`;
+        const quem = s.quemConfirmou ? ` Comprado por ${s.quemConfirmou}.` : '';
+        avisos += `<div class="alert alert-done"><span aria-hidden="true">✅</span><span><strong>${s.confirmados} unidade(s) com compra confirmada.</strong>${esc(quem)} Obrigado!</span></div>`;
       }
       if (s.pendentes > 0) {
+        const quem = s.quemReservou ? ` Reservado por ${s.quemReservou}.` : '';
         const extra = s.aguardando > 0
           ? ` ${s.aguardando} reserva(s) já passou de ${AVISO_HORAS}h sem confirmação — se foi você, confirme em “Meus presentes”.`
           : '';
-        avisos += `<div class="alert alert-pending"><span aria-hidden="true">⏳</span><span><strong>${s.pendentes} unidade(s) reservada(s), mas ainda sem confirmação de compra.</strong>${esc(extra)}</span></div>`;
+        avisos += `<div class="alert alert-pending"><span aria-hidden="true">⏳</span><span><strong>${s.pendentes} unidade(s) reservada(s), mas ainda sem confirmação de compra.</strong>${esc(quem)}${esc(extra)}</span></div>`;
       }
       if (s.expirados > 0) {
         avisos += `<div class="alert alert-expired"><span aria-hidden="true">⚠️</span><span>${s.expirados} reserva(s) expirou sem confirmação e o item voltou a ficar disponível.</span></div>`;
@@ -758,13 +968,15 @@
 
     const reserva = {
       id: novoId(),
+      servidorId: null,
       dispositivoId: estado.dispositivoId,
       produtoId: itemAtual.id,
       nome: nome,
       qtd: qtd,
       status: 'pendente',
       criadoEm: new Date().toISOString(),
-      confirmadoEm: null
+      confirmadoEm: null,
+      pendenteSync: servidorAtivo()
     };
 
     estado.nome = nome;
@@ -776,6 +988,9 @@
     renderTudo();
 
     window.open(produto.link, '_blank', 'noopener');
+
+    // Avisa os outros convidados imediatamente que este item está reservado.
+    if (servidorAtivo()) enviarReserva(reserva).then(renderTudo);
 
     // O aviso: perguntamos explicitamente se a compra aconteceu.
     reservaPendenteDeResposta = reserva.id;
@@ -802,8 +1017,10 @@
       toast(`Reserva guardada. Volte aqui para confirmar em até ${Math.round(TTL_HORAS / 24)} dias, senão o item é liberado.`, 'warn');
     }
 
+    r.pendenteSync = servidorAtivo();
     salvarEstado();
     renderTudo();
+    if (servidorAtivo()) enviarReserva(r).then(renderTudo);
   }
 
   function acaoReserva(acao, reservaId) {
@@ -830,8 +1047,10 @@
       return;
     }
 
+    r.pendenteSync = servidorAtivo();
     salvarEstado();
     renderTudo();
+    if (servidorAtivo()) enviarReserva(r).then(renderTudo);
   }
 
   /* =========================================================
@@ -859,7 +1078,7 @@
   }
 
   function exportarDados() {
-    const dados = estado.reservas.map(r => {
+    const dados = todasReservas().map(r => {
       const p = produtos.find(x => x.id === r.produtoId);
       return {
         presente: p ? p.nome_en : r.produtoId,
@@ -881,7 +1100,10 @@
   }
 
   function limparMeusDados() {
-    if (!confirm('Isto apaga todas as reservas salvas neste navegador. Continuar?')) return;
+    const aviso = servidorAtivo()
+      ? 'Isto esquece as suas reservas neste navegador. As que já foram enviadas continuam valendo para os outros convidados — para liberar um item, use o botão “Liberar”. Continuar?'
+      : 'Isto apaga todas as reservas salvas neste navegador. Continuar?';
+    if (!confirm(aviso)) return;
     estado = { dispositivoId: novoId(), nome: '', reservas: [] };
     salvarEstado();
     renderTudo();
@@ -924,14 +1146,18 @@
     renderTudo();
     toast(`Você tem ${pendentesMinhas.length} presente(s) reservado(s) sem confirmação de compra. Confirme em “Meus presentes”.`, 'warn');
   }
-  window.addEventListener('focus', lembrarPendentes);
+  window.addEventListener('focus', () => { sincronizar(); lembrarPendentes(); });
+  window.addEventListener('online', () => sincronizar());
 
   /* =========================================================
      Inicialização
      ========================================================= */
   renderizarFiltros();
   renderTudo();
-  setTimeout(lembrarPendentes, 900);   // avisa quem já reservou e ainda não confirmou
+  mostrarSync(servidorAtivo() ? 'sincronizando' : 'offline');
+  sincronizar();
+  if (servidorAtivo()) setInterval(() => sincronizar(), SYNC_INTERVALO);
+  setTimeout(lembrarPendentes, 1500);   // avisa quem já reservou e ainda não confirmou
 </script>
 </body>
 </html>
