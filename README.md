@@ -32,16 +32,24 @@ Fontes do sistema (`Iowan Old Style`/`Palatino`/`Georgia` nos títulos), ícones
 inline, nenhum arquivo externo: a página continua sendo um HTML só, sem requisição de
 rede além do Supabase. Todo texto passa de 4.5:1 de contraste.
 
-### Imagem de fundo no topo
+### Ilustração de fundo no topo
 
-Coloque o arquivo em `assets/` e troque uma linha no `:root`:
+Basta colocar o arquivo em `assets/` com um destes nomes — nenhuma edição de código:
 
-```css
---hero-img: url('assets/fundo.jpg');   /* no lugar de `none` */
+```
+assets/farol.jpg   ·   assets/farol.png   ·   assets/fundo.jpg   ·   assets/fundo.png
 ```
 
-O véu escuro sobre a imagem é ligado sozinho (a classe `com-imagem` entra por JS quando
-a variável deixa de ser `none`), então o título continua legível sobre qualquer foto.
+O site testa os quatro na ordem e usa o primeiro que carregar (`ARQUIVOS_FUNDO`, no fim
+do `<script>`). Achando um, ele preenche `--hero-img` e liga a classe `com-imagem`, que
+aplica o véu escuro sobre a ilustração; **sem nenhum arquivo, o topo fica com o degradê e
+nada quebra**.
+
+O véu é mais leve no meio e fecha embaixo, onde entra a onda. Medido no navegador com
+uma imagem clara (o pior caso para texto branco): título 5,0:1, parágrafo 6,6:1 e pílula
+de sincronização 10,3:1.
+
+Vale reduzir a imagem para ~1600px de largura antes de subir, para não pesar no celular.
 
 ## Idiomas
 
