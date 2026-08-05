@@ -97,7 +97,9 @@ Os prazos ficam nas constantes `TTL_HORAS` e `AVISO_HORAS` no início do `<scrip
 - Resumo geral no topo: confirmados, aguardando confirmação, faltantes e % do enxoval.
 - Busca por nome (EN/PT) e filtros de categoria gerados a partir do catálogo.
 - Nome do convidado obrigatório, para os pais saberem quem presenteou.
-- Exportação das reservas em JSON e opção de apagar os dados do dispositivo.
+- Exportação das reservas em JSON e limpeza dos dados do aparelho existem, mas
+  **fora da interface**: `exportarDados()` e `limparMeusDados()` são chamadas pelo
+  console do navegador, para nenhum convidado tropeçar nelas.
 - Layout responsivo, toasts no lugar de `alert()`, fechar com `Esc`, foco visível,
   rótulos ARIA e respeito a `prefers-reduced-motion`.
 
