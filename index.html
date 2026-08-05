@@ -828,7 +828,6 @@
 
 <footer>
   <p data-i18n="rodape">Feito com carinho para o Richard ⚓ · Os dados ficam salvos neste navegador.</p>
-  <p><button type="button" data-i18n="exportar" onclick="exportarDados()">Exportar reservas (JSON)</button> · <button type="button" data-i18n="apagar" onclick="limparMeusDados()">Apagar minhas reservas</button></p>
 </footer>
 
 <!-- Modal 1: reserva -->
@@ -941,8 +940,6 @@
       meusPresentes: 'Meus presentes 🎁',
       meusPresentesDica: 'Estas são as reservas feitas neste dispositivo. Confirme quando a compra estiver feita — ou libere o item se mudar de ideia.',
       rodape: 'Feito com carinho para o Richard ⚓ · Os dados ficam salvos neste navegador.',
-      exportar: 'Exportar reservas (JSON)',
-      apagar: 'Apagar minhas reservas',
 
       campoNome: 'Seu nome',
       campoNomeEx: 'Ex.: Ana e João',
@@ -1041,8 +1038,6 @@
       meusPresentes: 'My gifts 🎁',
       meusPresentesDica: 'These are the reservations made on this device. Confirm once you have bought the gift — or release it if you change your mind.',
       rodape: 'Made with love for Richard ⚓ · Your choices are saved in this browser.',
-      exportar: 'Export reservations (JSON)',
-      apagar: 'Delete my reservations',
 
       campoNome: 'Your name',
       campoNomeEx: 'e.g. Ana and João',
@@ -1747,6 +1742,9 @@
     setTimeout(() => el.remove(), 6000);
   }
 
+  /* Utilitários dos pais: sem botão na página, chamados pelo console do navegador
+     (exportarDados() baixa o JSON das reservas, limparMeusDados() esquece as deste
+     aparelho). Ficam fora da interface para nenhum convidado tropeçar neles. */
   function exportarDados() {
     const dados = todasReservas().map(r => {
       const p = produtos.find(x => x.id === r.produtoId);
