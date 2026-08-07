@@ -563,6 +563,8 @@
   .btn-danger { background: var(--red); border-color: var(--red); }
   .btn-danger:hover:not(:disabled) { background: #9b3630; }
   .btn-sm { padding: 8px 13px; font-size: 0.8em; margin-top: 0; width: auto; border-radius: 9px; }
+  /* Ação secundária do card: desistir da própria reserva */
+  .btn-secundario { margin-top: 8px; padding: 9px 12px; font-size: 0.85em; }
 
   /* =========================================================
      Modais
@@ -896,7 +898,14 @@
     { id: 24, categoria: "Clothing", nome_en: "Knitted Cardigans", nome_pt: "Casacos de Tricô", desc_pt: "Casacos fáceis de vestir.", desc_en: "Knits that are easy to put on.", meta: 3, link: "https://www.shein.co.uk/pdsearch/baby%20boy%20knit%20cardigan/" },
     { id: 25, categoria: "Clothing", nome_en: "Winter Pramsuit", nome_pt: "Macacão de Neve", desc_pt: "Garante o passeio no inverno de Londres.", desc_en: "Essential for walks in the London winter.", meta: 1, link: "https://www.temu.com/uk/search_result.html?search_key=baby+boy+pramsuit" },
     { id: 26, categoria: "Clothing", nome_en: "Hats, Mittens & Socks", nome_pt: "Kit de Toucas, Luvinhas e Meias", desc_pt: "Acessórios de inverno.", desc_en: "Winter accessories.", meta: 3, link: "https://www.temu.com/uk/search_result.html?search_key=baby+winter+hat+set" },
-    { id: 27, categoria: "Clothing", nome_en: "Cotton Joggers", nome_pt: "Calças de Moletom (Joggers)", desc_pt: "Perfeitas para a fase de engatinhar.", desc_en: "Perfect for the crawling stage.", meta: 7, link: "https://www.temu.com/uk/search_result.html?search_key=baby+boy+cotton+trousers" }
+    { id: 27, categoria: "Clothing", nome_en: "Cotton Joggers", nome_pt: "Calças de Moletom (Joggers)", desc_pt: "Perfeitas para a fase de engatinhar.", desc_en: "Perfect for the crawling stage.", meta: 7, link: "https://www.temu.com/uk/search_result.html?search_key=baby+boy+cotton+trousers" },
+
+    // FRALDAS — a meta é em pacotes; cada pacote precisa ter 50 fraldas ou mais
+    { id: 30, categoria: "Nappies", nome_en: "Nappies Size 1 — Newborn", nome_pt: "Fraldas Tamanho P — Size 1", desc_pt: "6 pacotes de 50+ para fechar 300 fraldas.", desc_en: "6 packs of 50+ to reach 300 nappies.", meta: 6, link: "https://www.amazon.com.br/s?k=fralda+tamanho+p+pacote+mega+ou+hiper" },
+    { id: 31, categoria: "Nappies", nome_en: "Nappies Size 2", nome_pt: "Fraldas Tamanho M — Size 2", desc_pt: "10 pacotes de 50+ para fechar 500 fraldas.", desc_en: "10 packs of 50+ to reach 500 nappies.", meta: 10, link: "https://www.amazon.com.br/s?k=fralda+tamanho+m+pacote+mega+ou+hiper" },
+    { id: 32, categoria: "Nappies", nome_en: "Nappies Size 3", nome_pt: "Fraldas Tamanho G — Size 3", desc_pt: "14 pacotes de 50+ para fechar 700 fraldas.", desc_en: "14 packs of 50+ to reach 700 nappies.", meta: 14, link: "https://www.amazon.com.br/s?k=fralda+tamanho+g+pacote+mega+ou+hiper" },
+    { id: 33, categoria: "Nappies", nome_en: "Nappies Size 4", nome_pt: "Fraldas Tamanho XG — Size 4", desc_pt: "12 pacotes de 50+ para fechar 600 fraldas.", desc_en: "12 packs of 50+ to reach 600 nappies.", meta: 12, link: "https://www.amazon.com.br/s?k=fralda+tamanho+xg+pacote+mega+ou+hiper" },
+    { id: 34, categoria: "Nappies", nome_en: "Nappies Size 5", nome_pt: "Fraldas Tamanho XXG — Size 5", desc_pt: "7 pacotes de 50+ para fechar 350 fraldas.", desc_en: "7 packs of 50+ to reach 350 nappies.", meta: 7, link: "https://www.amazon.com.br/s?k=fralda+tamanho+xxg+pacote+mega+ou+hiper" }
   ];
 
   /* =========================================================
@@ -905,14 +914,16 @@
   const CATEGORIAS = {
     'Bath & Hygiene':   { pt: 'Banho e Higiene',  en: 'Bath & Hygiene' },
     'Nursery & Outing': { pt: 'Quarto e Passeio', en: 'Nursery & Outing' },
-    'Clothing':         { pt: 'Roupas',           en: 'Clothing' }
+    'Clothing':         { pt: 'Roupas',           en: 'Clothing' },
+    'Nappies':          { pt: 'Fraldas',          en: 'Nappies' }
   };
 
   // Ícone de cada categoria, desenhado inline para não depender de nada externo.
   const ICONES = {
     'Bath & Hygiene':   '<path d="M4 12h16v3a5 5 0 0 1-5 5H9a5 5 0 0 1-5-5v-3Z"/><path d="M7 12V6a2 2 0 0 1 4 0"/><path d="M6 20l-1 2M18 20l1 2"/>',
     'Nursery & Outing': '<path d="M3 20V9l9-5 9 5v11"/><path d="M3 13h18"/><path d="M8 20v-7M16 20v-7"/>',
-    'Clothing':         '<path d="M8 3l4 3 4-3 5 3-2 4-2-1v11H7V9L5 10 3 6l5-3Z"/>'
+    'Clothing':         '<path d="M8 3l4 3 4-3 5 3-2 4-2-1v11H7V9L5 10 3 6l5-3Z"/>',
+    'Nappies':          '<path d="M4 6h16v4a8 8 0 0 1-8 8 8 8 0 0 1-8-8V6Z"/><path d="M4 6V4h4v2M20 6V4h-4v2"/><path d="M9 12h6"/>'
   };
   const iconeCategoria = c =>
     `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${ICONES[c] || ''}</svg>`;
@@ -977,6 +988,8 @@
         `<strong>${n} unidade(s) reservada(s), mas ainda sem confirmação de compra.</strong>${quem ? ' Reservado por ' + quem + '.' : ''}${atraso ? ` ${atraso} reserva(s) já passou de ${AVISO_HORAS}h sem confirmação — se foi você, confirme em “Meus presentes”.` : ''}`,
       avisoExpirado: n => `${n} reserva(s) expirou sem confirmação e o item voltou a ficar disponível.`,
       btnPresentear: 'Quero presentear',
+      btnLiberarMinha: 'Liberar minha reserva',
+      btnVerMinhas: 'Ver minhas reservas',
       btnTudoReservado: 'Tudo reservado — aguardando confirmação',
       btnMetaAtingida: 'Meta atingida! ⚓',
 
@@ -1006,6 +1019,7 @@
       okGuardado: dias => `Reserva guardada. Volte aqui para confirmar em até ${dias} dias, senão o item é liberado.`,
       okDesfeito: 'Confirmação desfeita — a reserva voltou a ficar pendente.',
       okLiberadoOutros: 'Item liberado para outros convidados.',
+      confirmLiberarConfirmada: 'Você já tinha confirmado esta compra. Liberar mesmo assim, para outra pessoa comprar?',
       confirmLiberar: 'Tem certeza que quer liberar este item para outra pessoa?',
       confirmApagarServidor: 'Isto esquece as suas reservas neste navegador. As que já foram enviadas continuam valendo para os outros convidados — para liberar um item, use o botão “Liberar”. Continuar?',
       confirmApagarLocal: 'Isto apaga todas as reservas salvas neste navegador. Continuar?',
@@ -1073,6 +1087,8 @@
         `<strong>${n} item(s) reserved, but the purchase is not confirmed yet.</strong>${quem ? ' Reserved by ' + quem + '.' : ''}${atraso ? ` ${atraso} reservation(s) passed ${AVISO_HORAS}h without confirmation — if that was you, confirm under “My gifts”.` : ''}`,
       avisoExpirado: n => `${n} reservation(s) expired without confirmation and the item is available again.`,
       btnPresentear: 'I want to gift this',
+      btnLiberarMinha: 'Release my reservation',
+      btnVerMinhas: 'See my reservations',
       btnTudoReservado: 'All reserved — awaiting confirmation',
       btnMetaAtingida: 'Goal reached! ⚓',
 
@@ -1100,6 +1116,7 @@
       okGuardado: dias => `Reservation saved. Come back to confirm within ${dias} days, otherwise the item is released.`,
       okDesfeito: 'Confirmation undone — the reservation is pending again.',
       okLiberadoOutros: 'Item released for the other guests.',
+      confirmLiberarConfirmada: 'You had already confirmed this purchase. Release it anyway, so someone else can buy it?',
       confirmLiberar: 'Are you sure you want to release this item for someone else?',
       confirmApagarServidor: 'This forgets your reservations in this browser. The ones already sent still count for the other guests — to release an item, use the “Release” button. Continue?',
       confirmApagarLocal: 'This deletes every reservation saved in this browser. Continue?',
@@ -1497,6 +1514,19 @@
       const podeReservar = !s.completo && s.disponivel > 0;
       const textoBotao = s.completo ? t('btnMetaAtingida') : (s.disponivel === 0 ? t('btnTudoReservado') : t('btnPresentear'));
 
+      // Quem reservou pode desistir sem sair do card
+      const minhas = estado.reservas.filter(r =>
+        r.produtoId === p.id &&
+        r.dispositivoId === estado.dispositivoId &&
+        ['pendente', 'confirmado'].includes(statusEfetivo(r))
+      );
+      let botaoDesistir = '';
+      if (minhas.length === 1) {
+        botaoDesistir = `<button type="button" class="btn btn-ghost btn-secundario" data-liberar="${minhas[0].id}">${esc(t('btnLiberarMinha'))}</button>`;
+      } else if (minhas.length > 1) {
+        botaoDesistir = `<button type="button" class="btn btn-ghost btn-secundario" data-ver-minhas="1">${esc(t('btnVerMinhas'))} (${minhas.length})</button>`;
+      }
+
       const card = document.createElement('div');
       card.className = 'card' + classe;
       card.style.animationDelay = Math.min(indice * 35, 400) + 'ms';   // entrada escalonada
@@ -1524,10 +1554,22 @@
           </div>
           ${avisos}
         </div>
-        <button type="button" class="btn" ${podeReservar ? '' : 'disabled'} data-id="${p.id}">${textoBotao}</button>
+        <div>
+          <button type="button" class="btn" ${podeReservar ? '' : 'disabled'} data-id="${p.id}">${textoBotao}</button>
+          ${botaoDesistir}
+        </div>
       `;
       const botao = card.querySelector('button[data-id]');
       if (podeReservar) botao.addEventListener('click', () => abrirModal(p.id));
+
+      const liberar = card.querySelector('button[data-liberar]');
+      if (liberar) liberar.addEventListener('click', () => acaoReserva('cancelar', liberar.dataset.liberar));
+
+      const verMinhas = card.querySelector('button[data-ver-minhas]');
+      if (verMinhas) verMinhas.addEventListener('click', () => {
+        document.getElementById('minhas-reservas').scrollIntoView({ behavior: 'smooth', block: 'start' });
+      });
+
       app.appendChild(card);
     });
   }
@@ -1555,7 +1597,8 @@
       let situacao, acoes;
       if (st === 'confirmado') {
         situacao = `<small style="color:var(--green)">${t('linhaConfirmada')(esc(quando))}</small>`;
-        acoes = `<button type="button" class="btn btn-sm btn-cancel" data-acao="desfazer" data-id="${r.id}">${esc(t('acaoDesfazer'))}</button>`;
+        acoes = `<button type="button" class="btn btn-sm btn-cancel" data-acao="desfazer" data-id="${r.id}">${esc(t('acaoDesfazer'))}</button>
+                 <button type="button" class="btn btn-sm btn-danger" data-acao="cancelar" data-id="${r.id}">${esc(t('acaoLiberar'))}</button>`;
       } else if (st === 'expirado') {
         situacao = `<small style="color:var(--red)">${t('linhaExpirada')(esc(quando))}</small>`;
         acoes = `<button type="button" class="btn btn-sm btn-green" data-acao="confirmar" data-id="${r.id}">${esc(t('acaoCompreiAssim'))}</button>
@@ -1704,7 +1747,8 @@
       r.confirmadoEm = null;
       toast(t('okDesfeito'), 'warn');
     } else if (acao === 'cancelar') {
-      if (!confirm(t('confirmLiberar'))) return;
+      const jaConfirmada = statusEfetivo(r) === 'confirmado';
+      if (!confirm(t(jaConfirmada ? 'confirmLiberarConfirmada' : 'confirmLiberar'))) return;
       r.status = 'cancelado';
       toast(t('okLiberadoOutros'), 'warn');
     } else if (acao === 'loja') {

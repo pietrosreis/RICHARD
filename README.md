@@ -72,6 +72,23 @@ já que as lojas são britânicas. A busca procura nos quatro campos, então "to
 "toalha" acham o mesmo item em qualquer idioma. Horários seguem o locale
 (`pt-BR` / `en-GB`), e `<html lang>`, `<title>` e a meta description acompanham a troca.
 
+## Fraldas
+
+A categoria **Fraldas** tem meta em **pacotes**, não em unidades — cada pacote precisa
+ter 50 fraldas ou mais, e a descrição do card diz quantos pacotes fecham o total:
+
+| Tamanho | Total de fraldas | Pacotes |
+| --- | --- | --- |
+| P (Size 1) | 300 | 6 |
+| M (Size 2) | 500 | 10 |
+| G (Size 3) | 700 | 14 |
+| XG (Size 4) | 600 | 12 |
+| XXG (Size 5) | 350 | 7 |
+
+Os links vão para a **Amazon Brasil**, como veio na lista original — o resto do site
+aponta para lojas do Reino Unido. Trocar para `amazon.co.uk` é editar cinco `link` no
+catálogo.
+
 ## Como funciona a confirmação de compra
 
 O ponto central é saber **se a pessoa realmente comprou ou não**. Cada presente tem
@@ -88,6 +105,15 @@ três números: meta, reservado e confirmado.
 5. O bloco **Meus presentes** lista as reservas feitas naquele dispositivo, com os
    botões *Já comprei*, *Abrir loja* e *Liberar*. Um lembrete aparece ao reabrir a
    página enquanto houver reserva sem confirmação.
+
+### Desistir da reserva
+
+Quem reservou pode liberar o item **sem sair do card**: aparece um botão *Liberar minha
+reserva* logo abaixo do botão principal, visível só para o aparelho dono da reserva.
+Havendo mais de uma reserva sua no mesmo item, o botão vira *Ver minhas reservas* e leva
+ao painel. Liberar uma compra **já confirmada** também é possível, com uma pergunta
+diferente para não acontecer sem querer. Nada é apagado no banco: a linha vira
+`cancelado` e o item volta à lista para os outros convidados.
 
 Os prazos ficam nas constantes `TTL_HORAS` e `AVISO_HORAS` no início do `<script>`.
 
