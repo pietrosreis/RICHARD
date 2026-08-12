@@ -85,9 +85,9 @@ ter 50 fraldas ou mais, e a descrição do card diz quantos pacotes fecham o tot
 | XG (Size 4) | 600 | 12 |
 | XXG (Size 5) | 350 | 7 |
 
-Os links vão para a **Amazon Brasil**, como veio na lista original — o resto do site
-aponta para lojas do Reino Unido. Trocar para `amazon.co.uk` é editar cinco `link` no
-catálogo.
+Os links vão para a **Amazon UK** (`nappies size N jumbo pack`), como o resto do site.
+A lista original trazia links da Amazon Brasil; foram trocados porque os convidados
+compram no Reino Unido.
 
 ## Como funciona a confirmação de compra
 
