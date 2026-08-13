@@ -72,6 +72,20 @@ já que as lojas são britânicas. A busca procura nos quatro campos, então "to
 "toalha" acham o mesmo item em qualquer idioma. Horários seguem o locale
 (`pt-BR` / `en-GB`), e `<html lang>`, `<title>` e a meta description acompanham a troca.
 
+## Lista da Amazon (entrega em casa)
+
+Uma faixa em destaque abre a área de conteúdo, antes da busca, convidando quem preferir
+comprar na **Amazon UK** — nesse caso o presente vai direto para o endereço da família.
+Aponta para a lista de bebê:
+
+```
+https://www.amazon.co.uk/baby-reg/heberbarros-reis-december-2026-southall/2YCUE413GSD04
+```
+
+O endereço foi enviado com `?ref_=cm_sw_r_apin_dp_…&language=en-US`; os dois parâmetros
+saíram — o primeiro é rastreio de compartilhamento e o segundo força inglês americano
+numa página britânica. Para restaurar, é só devolvê-los ao `href` da faixa.
+
 ## Fraldas
 
 A categoria **Fraldas** tem meta em **pacotes**, não em unidades — cada pacote precisa
