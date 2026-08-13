@@ -327,6 +327,61 @@
 
   .container { max-width: 1180px; margin: 0 auto; padding: 38px 20px 70px; }
 
+  /* ---------- Faixa da lista da Amazon ---------- */
+  .amazon-faixa {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    flex-wrap: wrap;
+    background: linear-gradient(135deg, #fffaf0 0%, var(--brass-soft) 100%);
+    border: 1px solid var(--line-strong);
+    border-left: 5px solid var(--brass);
+    border-radius: var(--r-lg);
+    padding: 20px 22px;
+    box-shadow: var(--shadow);
+    margin-bottom: 30px;
+  }
+  .amazon-icone {
+    flex: none;
+    width: 46px; height: 46px;
+    border-radius: 13px;
+    display: grid;
+    place-items: center;
+    background: #fff;
+    border: 1px solid var(--line-strong);
+    color: var(--brass);
+  }
+  .amazon-icone svg { width: 24px; height: 24px; }
+  .amazon-texto { flex: 1 1 320px; min-width: 0; }
+  .amazon-texto strong {
+    display: block;
+    font-family: var(--fonte-titulo);
+    font-weight: 400;
+    font-size: 1.24em;
+    color: var(--navy-800);
+    margin-bottom: 3px;
+  }
+  .amazon-texto p { margin: 0; font-size: 0.9em; color: var(--ink-soft); }
+  .amazon-btn {
+    flex: none;
+    background: var(--navy-800);
+    color: #fff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 0.95em;
+    padding: 13px 22px;
+    border-radius: 12px;
+    box-shadow: var(--shadow-sm);
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    white-space: nowrap;
+  }
+  .amazon-btn:hover { background: var(--navy-900); transform: translateY(-2px); box-shadow: var(--shadow); }
+  .amazon-btn:focus-visible { outline: 3px solid rgba(47, 91, 131, 0.45); outline-offset: 2px; }
+  @media (max-width: 640px) {
+    .amazon-faixa { padding: 18px; gap: 14px; }
+    .amazon-btn { width: 100%; text-align: center; }
+  }
+
   /* =========================================================
      Busca e filtros
      ========================================================= */
@@ -808,6 +863,23 @@
 
 <main class="container">
 
+  <!-- Lista de bebê da Amazon: compra entregue direto em casa -->
+  <aside class="amazon-faixa">
+    <span class="amazon-icone" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M3 10.5 12 3l9 7.5"/><path d="M5 9.5V20a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V9.5"/>
+        <path d="M9 21v-6h6v6"/>
+      </svg>
+    </span>
+    <div class="amazon-texto">
+      <strong data-i18n="amazonTitulo">Prefere comprar na Amazon e receber em casa?</strong>
+      <p data-i18n="amazonTexto">A lista de bebê do Richard também está na Amazon UK. Comprando por lá, o presente chega direto no nosso endereço — sem você precisar carregar nada.</p>
+    </div>
+    <a class="amazon-btn" data-i18n="amazonBotao"
+       href="https://www.amazon.co.uk/baby-reg/heberbarros-reis-december-2026-southall/2YCUE413GSD04"
+       target="_blank" rel="noopener">Abrir a lista na Amazon</a>
+  </aside>
+
   <div class="toolbar">
     <div class="search-wrap">
       <label class="sr-only" for="busca" data-i18n="buscaLabel">Buscar presente</label>
@@ -948,6 +1020,9 @@
       buscaPlaceholder: 'Buscar presente…',
       filtrosAria: 'Filtrar por categoria',
       todos: 'Todos',
+      amazonTitulo: 'Prefere comprar na Amazon e receber em casa?',
+      amazonTexto: 'A lista de bebê do Richard também está na Amazon UK. Comprando por lá, o presente chega direto no nosso endereço — sem você precisar carregar nada.',
+      amazonBotao: 'Abrir a lista na Amazon',
       meusPresentes: 'Meus presentes 🎁',
       meusPresentesDica: 'Estas são as reservas feitas neste dispositivo. Confirme quando a compra estiver feita — ou libere o item se mudar de ideia.',
       rodape: 'Feito com carinho para o Richard ⚓ · Os dados ficam salvos neste navegador.',
@@ -1049,6 +1124,9 @@
       buscaPlaceholder: 'Search gift…',
       filtrosAria: 'Filter by category',
       todos: 'All',
+      amazonTitulo: 'Rather buy on Amazon and have it delivered?',
+      amazonTexto: "Richard's baby registry is also on Amazon UK. Buying there, the gift arrives straight at our door — you do not have to carry a thing.",
+      amazonBotao: 'Open the Amazon registry',
       meusPresentes: 'My gifts 🎁',
       meusPresentesDica: 'These are the reservations made on this device. Confirm once you have bought the gift — or release it if you change your mind.',
       rodape: 'Made with love for Richard ⚓ · Your choices are saved in this browser.',
