@@ -1060,7 +1060,7 @@
       barraAria: (c, m, p) => `${c} de ${m} confirmados, ${p} reservados`,
       avisoConfirmado: (n, quem) => `<strong>${n} unidade(s) com compra confirmada.</strong>${quem ? ' Comprado por ' + quem + '.' : ''} Obrigado!`,
       avisoPendente: (n, quem, atraso) =>
-        `<strong>${n} unidade(s) reservada(s), mas ainda sem confirmação de compra.</strong>${quem ? ' Reservado por ' + quem + '.' : ''}${atraso ? ` ${atraso} reserva(s) já passou de ${AVISO_HORAS}h sem confirmação — se foi você, confirme em “Meus presentes”.` : ''}`,
+        `<strong>${n} unidade(s) reservada(s), mas ainda sem confirmação de compra.</strong>${quem ? ' Reservado por ' + quem + '.' : ''}${atraso ? ` ${atraso} reserva(s) já passou de ${limiteAviso()} sem confirmação — se foi você, confirme em “Meus presentes”.` : ''}`,
       avisoExpirado: n => `${n} reserva(s) expirou sem confirmação e o item voltou a ficar disponível.`,
       btnPresentear: 'Quero presentear',
       btnLiberarMinha: 'Liberar minha reserva',
@@ -1162,7 +1162,7 @@
       barraAria: (c, m, p) => `${c} of ${m} confirmed, ${p} reserved`,
       avisoConfirmado: (n, quem) => `<strong>${n} item(s) with the purchase confirmed.</strong>${quem ? ' Bought by ' + quem + '.' : ''} Thank you!`,
       avisoPendente: (n, quem, atraso) =>
-        `<strong>${n} item(s) reserved, but the purchase is not confirmed yet.</strong>${quem ? ' Reserved by ' + quem + '.' : ''}${atraso ? ` ${atraso} reservation(s) passed ${AVISO_HORAS}h without confirmation — if that was you, confirm under “My gifts”.` : ''}`,
+        `<strong>${n} item(s) reserved, but the purchase is not confirmed yet.</strong>${quem ? ' Reserved by ' + quem + '.' : ''}${atraso ? ` ${atraso} reservation(s) passed ${limiteAviso()} without confirmation — if that was you, confirm under “My gifts”.` : ''}`,
       avisoExpirado: n => `${n} reservation(s) expired without confirmation and the item is available again.`,
       btnPresentear: 'I want to gift this',
       btnLiberarMinha: 'Release my reservation',
@@ -1218,6 +1218,10 @@
   const descricao = p => estado.idioma === 'pt' ? p.desc_pt : p.desc_en;
   const categoria = c => (CATEGORIAS[c] || {})[estado.idioma] || c;
   const hora = d => d.toLocaleTimeString(TEXTOS[estado.idioma].locale, { hour: '2-digit', minute: '2-digit' });
+  // "48h" fica estranho para prazos longos; a partir de 2 dias o texto vira dias
+  const limiteAviso = () => AVISO_HORAS < 48
+    ? `${AVISO_HORAS}h`
+    : `${Math.round(AVISO_HORAS / 24)} ${estado.idioma === 'pt' ? 'dias' : 'days'}`;
 
   function trocarIdioma(novo) {
     if (!TEXTOS[novo] || novo === estado.idioma) return;
@@ -1270,8 +1274,8 @@
      Estado persistido (localStorage)
      ========================================================= */
   const STORAGE_KEY = 'richard-cha-de-bebe-v2';
-  const TTL_HORAS = 72;          // reserva sem confirmação expira em 3 dias
-  const AVISO_HORAS = 24;        // depois disso já mostramos "confirme sua compra"
+  const TTL_HORAS = 168;         // reserva sem confirmação expira em 7 dias
+  const AVISO_HORAS = 72;        // depois de 3 dias já cobramos a confirmação
 
   let estado = carregarEstado();
   let reservasRemotas = estado.cacheRemoto || [];   // reservas de todos os convidados, vindas do servidor

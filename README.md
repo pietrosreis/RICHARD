@@ -114,8 +114,10 @@ três números: meta, reservado e confirmado.
    - ✅ **Sim, já comprei** → vira compra confirmada (barra verde).
    - ⏳ **Ainda não** → continua reservado, com aviso amarelo no card.
    - ❌ **Não vou comprar** → o item volta imediatamente para a lista.
-4. Reservas sem confirmação passam a exibir um alerta depois de **24h** e
-   **expiram em 72h**, liberando o item automaticamente para outro convidado.
+4. Reservas sem confirmação passam a exibir um alerta depois de **3 dias** e
+   **expiram em 7 dias**, liberando o item automaticamente para outro convidado.
+   O prazo é longo de propósito: a lista fica no ar por meses e ninguém compra no
+   mesmo dia. O texto do alerta fala em horas até 48h e em dias a partir daí.
 5. O bloco **Meus presentes** lista as reservas feitas naquele dispositivo, com os
    botões *Já comprei*, *Abrir loja* e *Liberar*. Um lembrete aparece ao reabrir a
    página enquanto houver reserva sem confirmação.
