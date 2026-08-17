@@ -77,10 +77,18 @@ já que as lojas são britânicas. A busca procura nos quatro campos, então "to
 Uma faixa em destaque abre a área de conteúdo, antes da busca, convidando quem preferir
 comprar na **Amazon UK** — nesse caso o presente vai direto para o endereço da família.
 
-Para saltar aos olhos ela tem borda em latão, tipografia grande (título em 28px) e um
-**brilho que respira** (`@keyframes respirar`, ciclo de 2,6s). É um halo pulsando, não um
-pisca-pisca: o conteúdo nunca some, a opacidade fica sempre em 1 e o ciclo é lento demais
-para causar desconforto. Com `prefers-reduced-motion` a animação some por inteiro.
+Para saltar aos olhos ela tem borda em latão, tipografia grande (título em 28px no
+desktop, 33,6px centralizado no celular) e um **pulso** de 1,5s (`@keyframes chamar`) que
+move quatro coisas ao mesmo tempo: halo em latão que se expande, cor da borda, tom do
+fundo e um `scale(1.022)`. O botão pulsa junto, com halo próprio (`chamar-botao`).
+
+A intensidade foi medida comparando quadros ao longo do ciclo: a versão anterior variava
+1,47 de 255 (imperceptível) e a atual varia 17,4 — **11,8× mais evidente**.
+
+Continua não sendo pisca-pisca: o conteúdo nunca some, a opacidade fica em 1 e o ciclo dá
+0,67 flashes por segundo, contra o limite de segurança de 3. Com `prefers-reduced-motion`
+as duas animações somem. O `scale` foi verificado de 320px a 1280px sem estourar a
+largura da tela.
 
 Aponta para a lista de bebê:
 
