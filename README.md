@@ -76,6 +76,12 @@ já que as lojas são britânicas. A busca procura nos quatro campos, então "to
 
 Uma faixa em destaque abre a área de conteúdo, antes da busca, convidando quem preferir
 comprar na **Amazon UK** — nesse caso o presente vai direto para o endereço da família.
+
+Para saltar aos olhos ela tem borda em latão, tipografia grande (título em 28px) e um
+**brilho que respira** (`@keyframes respirar`, ciclo de 2,6s). É um halo pulsando, não um
+pisca-pisca: o conteúdo nunca some, a opacidade fica sempre em 1 e o ciclo é lento demais
+para causar desconforto. Com `prefers-reduced-motion` a animação some por inteiro.
+
 Aponta para a lista de bebê:
 
 ```
